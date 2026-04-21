@@ -89,17 +89,3 @@ POST	/api/modems-ping-test	PING тест модемов
 
 ## Доступ к веб-интерфейсу
 http://localhost:8090
-
-## Структура проекта
-bee-monitor/
-├── main.go           # Точка входа
-├── config.go         # Конфигурация серверов и модемов
-├── monitor.go        # Мониторинг серверов
-├── handlers.go       # API обработчики
-├── modems.go         # Тестирование модемов
-├── scheduler.go      # Планировщик перезагрузок
-├── web/
-│   └── index.html    # Веб-интерфейс
-└── config/
-    ├── servers.json  # Конфигурация серверов
-    └── modems.json   # Конфигурация модемов
