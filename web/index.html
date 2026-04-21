@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeDotNet Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0f3460, #1a1a2e);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+        
+        /* Вкладки */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .tab-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: white;
+            color: #1a1a2e;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .dashboard {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .server-card {
+            flex: 1;
+            min-width: 450px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .server-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+        }
+        
+        .server-header h2 {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        
+        .server-header .address {
+            font-family: monospace;
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+        
+        .server-body {
+            padding: 15px;
+        }
+        
+        .section {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section h3 {
+            font-size: 0.9em;
+            color: #2d3748;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 12px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #4a5568;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-family: monospace;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .status-good {
+            color: #38a169;
+            background: #f0fff4;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .status-warning {
+            color: #d69e2e;
+            background: #fffbeb;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .status-error {
+            color: #e53e3e;
+            background: #fff5f5;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .status-info {
+            color: #3182ce;
+            background: #ebf8ff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .delayed-point {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 8px;
+            font-size: 11px;
+        }
+        
+        .delayed-point strong {
+            color: #c53030;
+        }
+        
+        .delayed-points-list {
+            margin-top: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(to right, #f56565, #e53e3e);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            margin-top: 10px;
+            width: 200px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+        }
+        
+        .btn-restart:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .refresh-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        
+        .refresh-btn:hover {
+            transform: scale(1.05);
+        }
+		
+		.btn-stop {
+			background: linear-gradient(to right, #ed8936, #dd6b20);
+			color: white;
+			border: none;
+			border-radius: 8px;
+			padding: 8px 16px;
+			cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            margin-top: 10px;
+            width: 200px;
+            text-align: center;
+            transition: all 0.3s ease;
+		}
+
+		.btn-stop:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(221, 107, 32, 0.4);
+		}
+
+		.btn-stop:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+			transform: none;
+		}
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: #a0aec0;
+            font-size: 0.8em;
+            margin-top: 20px;
+        }
+        
+        .loading {
+            color: #a0aec0;
+            font-style: italic;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        
+        .modal-content h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #e53e3e;
+        }
+        
+        .modal-content p {
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 18px;
+        }
+        
+        .modal-btn {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        .modal-btn-cancel {
+            background: #e2e8f0;
+        }
+        
+        .modal-btn-confirm {
+            background: #e53e3e;
+            color: white;
+        }
+        
+        /* Стили для таблицы модемов */
+        .modem-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .modem-section h3 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        
+		.modem-buttons {
+			display: flex;
+			gap: 15px;
+			margin-bottom: 15px;
+		}
+
+		.modem-test-btn {
+			background: #4299e1;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 8px;
+			cursor: pointer;
+			font-weight: bold;
+			font-size: 14px;
+			transition: all 0.3s;
+		}
+
+		.modem-test-btn:hover {
+			background: #3182ce;
+			transform: scale(1.02);
+		}
+
+		.modem-test-btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+			transform: none;
+		}
+        
+        .modem-table {
+            width: 100%;
+            border-collapse: collapse;
+			font-size: 13px; 
+        }
+        
+        .modem-table th, .modem-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+			font-size: 15px;
+        }
+        
+        .modem-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+		.ping-ip {
+			color: #4299e1;
+			text-decoration: none;
+			cursor: pointer;
+			font-family: monospace;
+			font-size: 16px;
+			display: inline-block;
+			transition: transform 0.2s ease;
+		}
+
+		.ping-ip:hover {
+			text-decoration: underline;
+			color: #3182ce;
+			transform: scale(1.15);
+		}
+		
+		
+        .group-row {
+            background: #e2e8f0;
+        }
+        
+        .group-row th {
+            background: #cbd5e0;
+            padding: 8px 10px;
+            font-size: 14px;
+        }
+		
+		.api-doc-btn {
+			background: #48bb78;
+			color: white;
+			border: none;
+			padding: 8px 16px;
+			border-radius: 8px;
+			cursor: pointer;
+			font-weight: bold;
+			font-size: 13px;
+			transition: all 0.3s;
+		}
+
+		.api-doc-btn:hover {
+			background: #38a169;
+			transform: scale(1.02);
+		}
+		
+		@keyframes blink-bg {
+			0% { background-color: #fff5f5; color: #e53e3e; }
+			50% { background-color: #e53e3e; color: white; }
+			100% { background-color: #fff5f5; color: #e53e3e; }
+		}
+
+		.info-testing {
+			display: inline-block;
+			padding: 5px 10px;
+			border-radius: 8px;
+			animation: blink-bg 3s infinite;
+			font-weight: bold;
+		}
+		
+		.instruction-content {
+			max-width: 1000px;
+			max-height: 90vh;
+			overflow-y: auto;
+			line-height: 1.6;
+		}
+
+		.instruction-content h4 {
+			color: #2d3748;
+			margin: 15px 0 10px 0;
+			padding-bottom: 5px;
+			border-bottom: 2px solid #e2e8f0;
+		}
+
+		.instruction-content p {
+			margin: 8px 0;
+			font-size: 13px;
+		}
+
+		.instruction-content ul {
+			margin: 8px 0 8px 20px;
+		}
+
+		.instruction-content li {
+			margin: 5px 0;
+			font-size: 13px;
+		}
+
+		.instruction-content .note {
+			background: #fffaf0;
+			border-left: 4px solid #ed8936;
+			padding: 10px;
+			margin: 10px 0;
+			border-radius: 5px;
+		}
+
+		.instruction-content .warning {
+			background: #fff5f5;
+			border-left: 4px solid #e53e3e;
+			padding: 10px;
+			margin: 10px 0;
+			border-radius: 5px;
+		}
+
+		.instruction-content .success {
+			background: #f0fff4;
+			border-left: 4px solid #38a169;
+			padding: 10px;
+			margin: 10px 0;
+			border-radius: 5px;
+		}
+		
+		.meter-link {
+			color: #805ad5;
+			text-decoration: none;
+			cursor: pointer;
+			font-family: monospace;
+			font-weight: bold;
+		}
+
+		.meter-link:hover {
+			text-decoration: underline;
+			color: #6b46c1;
+		}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖥️ BeeDotNet Monitor</h1>
+            <p>Мониторинг серверов сбора данных и модемов (MOXA)</p>
+        </div>
+        
+        <!-- Вкладки -->
+		<div class="tabs" style="justify-content: space-between; align-items: center;">
+			<div style="display: flex; gap: 10px;">
+				<button class="tab-btn active" onclick="showTab('monitor')">📊 Мониторинг серверов</button>
+				<button class="tab-btn" onclick="showTab('test')">🔌 Тест модемов (MOXA)</button>
+				<button class="tab-btn" onclick="showTab('meters')">📋 Список приборов учета (96)</button>
+			</div>
+			<div style="display: flex; gap: 10px;">
+				<button class="api-doc-btn" onclick="showInstruction()">📖 Инструкция</button>
+				<button class="api-doc-btn" onclick="showApiDoc()">📖 API описание</button>
+			</div>
+		</div>
+        
+        <!-- Вкладка Мониторинг -->
+        <div id="tab-monitor" class="tab-content active">
+            <div class="dashboard" id="dashboard">
+                <div class="loading">Загрузка данных...</div>
+            </div>
+        </div>
+        
+		<!-- Вкладка Тест модемов -->
+		<div id="tab-test" class="tab-content">
+			<div class="modem-section">
+				<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+					<h3 style="margin: 0;">🔌 Проверка доступности модемов (MOXA)</h3>
+					
+				</div>
+				<div class="modem-buttons">
+					<button class="modem-test-btn" id="testTcpBtn" onclick="testModems('tcp')">🔌 Тест TCP (порт)</button>
+					<button class="modem-test-btn" id="testPingBtn" onclick="testModems('ping')">📡 Тест PING</button>
+				</div>
+				<div id="testTypeInfo" style="margin-bottom: 15px; font-size: 12px; color: #718096;"></div>
+				<table class="modem-table" id="modemsTable">
+					<thead>
+						<tr><th>Название</th><th>IP адрес</th><th>Порт</th><th>Статус</th><th>Задержка</th></tr>
+					</thead>
+					<tbody id="modemsTableBody">
+						<tr><td colspan="6" style="text-align: center; padding: 40px;">📡 Выберите тип теста (TCP или PING)</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- Вкладка Приборы учета -->
+		<div id="tab-meters" class="tab-content">
+			<div class="modem-section">
+				<h3>📋 Список приборов учета</h3>
+				<div style="margin-bottom: 15px;">
+					<input type="text" id="meterSearch" placeholder="🔍 Поиск по названию, IP, месту..." 
+						   style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px;">
+				</div>
+				<div style="overflow-x: auto; max-height: 70vh; overflow-y: auto;">
+					<table class="modem-table" id="metersTable">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Название</th>
+								<th>Местоположение модема(MOXA)</th>
+								<th>IP модема (MOXA)</th>
+								<th>Порт подключения</th>
+								<th>Тип прибора</th>
+								<th>Номер прибора</th>
+								<th>Тип учета</th>
+							</tr>
+						</thead>
+						<tbody id="metersTableBody">
+							<tr><td colspan="8" style="text-align: center; padding: 40px;">📡 Загрузка данных...</td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+
+        <div class="footer">
+            Автообновление каждые 30 секунд | Последнее обновление: <span id="lastUpdate">--:--:--</span>
+        </div>
+    </div>
+    
+    <button class="refresh-btn" onclick="refresh()">🔄 Обновить</button>
+    
+    <!-- Модальное окно -->
+    <div id="restartModal" class="modal">
+        <div class="modal-content">
+            <h3>⚠️ ВНИМАНИЕ!</h3>
+            <p id="modalMessage">Вы уверены, что хотите перезапустить IServer?</p>
+            <p id="modalMessageStop"; style="color: #718096; font-size: 12px;">Это действие остановит текущий процесс IServer.exe и запустит его заново.</p>
+            <div class="modal-buttons">
+                <button onclick="closeModal()" class="modal-btn modal-btn-cancel">Отмена</button>
+                <button onclick="executeRestart()" class="modal-btn modal-btn-confirm" id="modalConfirmBtn">Да, перезапустить</button>
+            </div>
+        </div>
+    </div>
+    
+	<!-- Модальное окно с API документацией -->
+	<div id="apiDocModal" class="modal">
+		<div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+				<h3 style="color: #2d3748;">📖 API Documentation - Web_Bee.Api</h3>
+				<button onclick="closeApiDoc()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+			</div>
+			<div id="apiDocContent" style="font-size: 12px; line-height: 1.6;">
+				<div class="loading">Загрузка документации...</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Модальное окно инструкции -->
+	<div id="instructionModal" class="modal">
+		<div class="modal-content instruction-content">
+			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+				<h3 style="color: #2d3748;">📖 Инструкция пользователя</h3>
+				<button onclick="closeInstruction()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+			</div>
+			<div id="instructionContent">
+				<h4>🎯 Назначение</h4>
+				<p>Мониторинг серверов сбора данных "Береза" и "Малые точки", проверка доступности модемов, преобразователей MOXA Nport и просмотр информации о связи прибора учета с модемом или преобразователем MOXA.</p>
+				
+				<h4>📊 Вкладка "Мониторинг серверов"</h4>
+				<ul>
+					<li><strong>IServer.exe</strong> - статус процесса сбора данных (зеленый - запущен, красный - остановлен)</li>
+					<li><strong>Web_Bee.Api</strong> - статус API сервера, PID процесса и пользователь</li>
+					<li><strong>Синхронизация времени</strong> - разница между системным временем и NTP сервером</li>
+					<li><strong>База данных</strong> - статус SQL соединения и XML сообщений</li>
+					<li><strong>Задержки данных</strong> - точки сбора с задержкой более 4 часов</li>
+					<li><strong>Перезапуск/Остановка</strong> - управление IServer (доступно если API сервер запущен от администратора)</li>
+				</ul>
+				
+				<h4>🔌 Вкладка "Тест модемов"</h4>
+				<ul>
+					<li><strong>Тест TCP</strong> - проверка доступности порта модема (таймаут 10 сек)</li>
+					<li><strong>Тест PING</strong> - проверка доступности по ICMP (5 попытки, таймаут 6 сек)</li>
+					<li><strong>Кликабельный IP</strong> - при нажатии на IP запускается быстрый PING</li>
+				</ul>
+				
+				<h4>📋 Вкладка "Приборы учета"</h4>
+				<ul>
+					<li>Список всех приборов учета</li>
+					<li><strong>Поиск</strong> - по названию, IP, местоположению, номеру прибора, типу</li>
+					<li><strong>Кликабельный IP</strong> - при нажатии на IP запускается быстрый PING</li>
+					<li><strong>Кликабельный номер счетчика</strong> - при нажатии на `Номер счетчика` запускается тест `Echo` (доступно в режиме модема `Сервер` )</li>
+				</ul>
+				
+				<h4>⚠️ Важная информация</h4>
+				<div class="warning">
+					<strong>Кнопка "Остановить":</strong> полностью останавливает процесс IServer.exe. 
+					После остановки сбор данных прекращается! Для запуска используйте "Перезапустить".
+				</div>
+				<div class="note">
+					<strong>Кнопка "Перезапустить":</strong> останавливает и запускает IServer.exe заново. 
+					Используется при зависаниях или после изменения конфигурации.
+				</div>
+				<div class="success">
+					<strong>Автообновление:</strong> данные обновляются автоматически каждые 30 секунд. 
+					Также можно обновить вручную кнопкой "🔄 Обновить" в правом нижнем углу.
+				</div>
+				
+				<h4>🖥️ Требования к правам</h4>
+				<ul>
+					<li>Для перезапуска/остановки IServer необходимы права администратора</li>
+					<li>Для запуска API сервера (Web_Bee.Api) необходимы права администратора</li>
+					<li>Доступ к сети 172.16.56.x для тестирования модемов</li>
+				</ul>
+				
+				<h4>📞 Контакты</h4>
+				<p>При возникновении проблем обращаться к администратору системы.</p>
+				<p style="margin-top: 15px; font-size: 11px; color: #718096;">Версия: 2.0 | Последнее обновление: 20.04.2026</p>
+			</div>
+			<div style="text-align: center; margin-top: 20px;">
+				<button onclick="closeInstruction()" style="padding: 8px 30px; background: #4299e1; color: white; border: none; border-radius: 8px; cursor: pointer;">Закрыть</button>
+			</div>
+		</div>
+	</div>
+	
+	
+    <script>
+        let pendingRestartUrl = null;
+        let isRestarting = false;
+        let pendingStopUrl = null;
+		
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function formatTime(date) {
+            return date.toLocaleTimeString('ru-RU', { hour12: false });
+        }
+        
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '--';
+            const date = new Date(dateStr);
+            return date.toLocaleString('ru-RU');
+        }
+        
+        function getStatusClass(status) {
+            if (status === 'good') return 'status-good';
+            if (status === 'warning') return 'status-warning';
+            if (status === 'critical') return 'status-error';
+            return 'status-error';
+        }
+        
+        function getStatusText(status) {
+            if (status === 'good') return '✅ В норме';
+            if (status === 'warning') return '⚠️ Внимание';
+            if (status === 'critical') return '❌ Критично';
+            return '❌ Ошибка';
+        }
+        
+        function formatTimeDiff(ns) {
+            const ms = Math.abs(ns / 1000000);
+            if (ms < 1000) return ms.toFixed(0) + ' мс';
+            return (ms / 1000).toFixed(2) + ' сек';
+        }
+        
+		function showRestartConfirm(serverUrl, serverName) {
+			if (isRestarting) return;
+			pendingRestartUrl = serverUrl;
+			const confirmBtn = document.getElementById('modalConfirmBtn');
+			confirmBtn.onclick = executeRestart;
+			confirmBtn.textContent = 'Да, перезапустить';
+			document.getElementById('modalMessage').innerHTML = `Вы уверены, что хотите перезапустить IServer на сервере <strong>${escapeHtml(serverName)}</strong>?`;
+			document.getElementById('modalMessageStop').innerHTML = `Это действие остановит текущий процесс IServer.exe и запустит его заново.`;
+			document.getElementById('restartModal').style.display = 'flex';
+		}
+        
+		function showStopConfirm(serverUrl, serverName) {
+			if (isRestarting) return;
+			pendingStopUrl = serverUrl;
+			const confirmBtn = document.getElementById('modalConfirmBtn');
+			confirmBtn.onclick = executeStop;
+			confirmBtn.textContent = 'Да, остановить';
+			document.getElementById('modalMessage').innerHTML = `Вы уверены, что хотите ОСТАНОВИТЬ IServer на сервере <strong>${escapeHtml(serverName)}</strong>?<br><span style="color: #e53e3e;">⚠️ Внимание! После остановки сервер не будет собирать данные!</span>`;
+			document.getElementById('modalMessageStop').innerHTML = `Это действие остановит текущий процесс IServer.exe.`;
+			document.getElementById('restartModal').style.display = 'flex';
+		}
+		
+        function closeModal() {
+            document.getElementById('restartModal').style.display = 'none';
+            pendingRestartUrl = null;
+        }
+        
+		function showInstruction() {
+			document.getElementById('instructionModal').style.display = 'flex';
+		}
+
+		function closeInstruction() {
+			document.getElementById('instructionModal').style.display = 'none';
+		}
+
+		// Закрытие по клику вне окна
+		window.onclick = function(event) {
+			const modal = document.getElementById('instructionModal');
+			if (event.target === modal) {
+				modal.style.display = 'none';
+			}
+		}
+
+		async function loadMeters() {
+			const tbody = document.getElementById('metersTableBody');
+			
+			try {
+				const response = await fetch('/api/meters');
+				const data = await response.json();
+				
+				if (data.success && data.meters) {
+					renderMetersTable(data.meters);
+					
+					// Обновить счетчик на кнопке
+					const meterBtn = document.querySelector('.tab-btn[onclick*="meters"]');
+					if (meterBtn) {
+						meterBtn.innerHTML = `📋 Список приборов учета (${data.count})`;
+					}
+				} else {
+					tbody.innerHTML = '<tr><td colspan="8" class="status-error">❌ Ошибка загрузки данных</td></tr>';
+				}
+			} catch (error) {
+				tbody.innerHTML = `<tr><td colspan="8" class="status-error">❌ Ошибка: ${error.message}</td></tr>`;
+			}
+		}
+
+function renderMetersTable(meters) {
+    const tbody = document.getElementById('metersTableBody');
+    const searchInput = document.getElementById('meterSearch');
+    
+    function filterAndRender() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filtered = meters.filter(m => 
+            m.name.toLowerCase().includes(searchTerm) ||
+            m.modem_ip.toLowerCase().includes(searchTerm) ||
+            m.modem_location.toLowerCase().includes(searchTerm) ||
+            m.meter_number.toLowerCase().includes(searchTerm) ||
+            m.meter_type.toLowerCase().includes(searchTerm)
+        );
+        
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">🔍 Ничего не найдено<\/td><\/tr>';
+            return;
+        }
+        
+        let html = '';
+        for (const m of filtered) {
+            // Проверяем, есть ли "сервер" в поле connection_port
+            const connectionPort = m.connection_port || '';
+            const hasServer = connectionPort.includes('сервер');
+            
+            // Извлекаем порт из connection_port (последние 4 цифры)
+            let meterPort = 0;
+            if (hasServer) {
+                const portMatch = connectionPort.match(/(\d{4})$/);
+                if (portMatch) {
+                    meterPort = parseInt(portMatch[1], 10);
+                }
+            }
+            
+            // Номер прибора кликабельный только если есть "сервер"
+            const meterNumberHtml = hasServer && meterPort > 0 ?
+                `<a href="#" class="meter-link" data-ip="${m.modem_ip}" data-port="${meterPort}" data-addr="${m.meter_number}" onclick="checkMeter('${m.modem_ip}', ${meterPort}, ${m.meter_number}, event); return false;">${m.meter_number}</a>` :
+                m.meter_number;
+            
+            html += `
+                <tr>
+                    <td>${m.id}<\/td>
+                    <td style="max-width: 550px; white-space: normal;">${escapeHtml(m.name)}<\/td>
+                    <td>${escapeHtml(m.modem_location)}<\/td>
+                    <td><a href="#" class="ping-ip" data-ip="${m.modem_ip}" onclick="pingIp('${m.modem_ip}', event); return false;">${m.modem_ip}<\/a><\/td>
+                    <td>${escapeHtml(connectionPort)}<\/td>
+                    <td>${m.meter_type}<\/td>
+                    <td>${meterNumberHtml}<\/td>
+                    <td>${m.accounting_type}<\/td>
+                <\/tr>
+            `;
+        }
+        tbody.innerHTML = html;
+    }
+    
+    filterAndRender();
+    searchInput.addEventListener('input', filterAndRender);
+}
+
+
+async function checkMeter(ip, port, addr, event) {
+    event.preventDefault();
+    
+    // Удаляем старый модал если есть
+    const existingModal = document.getElementById('meterCheckModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    const modal = document.createElement('div');
+    modal.id = 'meterCheckModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+    `;
+    
+    const content = document.createElement('div');
+    content.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        min-width: 500px;
+        max-width: 600px;
+        text-align: left;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    `;
+    content.innerHTML = `
+        <h3 style="margin-bottom: 15px;">🔍 Проверка счетчика</h3>
+        <div style="padding: 10px; background: #f8fafc; border-radius: 8px; margin-bottom: 15px;">
+            <div><strong>📍 IP модема:</strong> ${ip}</div>
+            <div><strong>🔌 Порт:</strong> ${port}</div>
+            <div><strong>🔢 Адрес счетчика:</strong> ${addr} (0x${addr.toString(16).toUpperCase()})</div>
+        </div>
+        <div style="margin-top: 15px; padding: 10px; border-radius: 8px;" class="meter-check-result">⏳ Проверка...</div>
+        <button id="meterCheckCloseBtn" style="margin-top: 15px; padding: 8px 20px; background: #4299e1; color: white; border: none; border-radius: 8px; cursor: pointer; width: 100%;">Закрыть</button>
+    `;
+    
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+    
+    // Закрытие
+    document.getElementById('meterCheckCloseBtn').onclick = function() {
+        modal.remove();
+    };
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    };
+    
+    try {
+        const response = await fetch('/api/check-meter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip: ip, port: port, addr: addr })
+        });
+        const data = await response.json();
+        
+        const resultDiv = content.querySelector('.meter-check-result');
+        if (data.success) {
+            resultDiv.style.backgroundColor = '#f0fff4';
+            resultDiv.style.border = '1px solid #c6f6d5';
+            resultDiv.innerHTML = `
+                <div style="color: #38a169; font-size: 20px; text-align: center;">✅</div>
+                <div style="color: #38a169; font-weight: bold; text-align: center;">${data.message}</div>
+                ${data.raw_data ? `<div style="margin-top: 10px; font-family: monospace; font-size: 11px; word-break: break-all;"><strong>📡 Ответ (hex):</strong><br>${data.raw_data}</div>` : ''}
+            `;
+        } else {
+            resultDiv.style.backgroundColor = '#fff5f5';
+            resultDiv.style.border = '1px solid #fed7d7';
+            resultDiv.innerHTML = `
+                <div style="color: #e53e3e; font-size: 20px; text-align: center;">❌</div>
+                <div style="color: #e53e3e; font-weight: bold; text-align: center;">${data.message}</div>
+                ${data.raw_data ? `<div style="margin-top: 10px; font-family: monospace; font-size: 11px; word-break: break-all;"><strong>📡 Получен ответ:</strong><br>${data.raw_data}</div>` : ''}
+            `;
+        }
+    } catch (error) {
+        const resultDiv = content.querySelector('.meter-check-result');
+        resultDiv.style.backgroundColor = '#fff5f5';
+        resultDiv.style.border = '1px solid #fed7d7';
+        resultDiv.innerHTML = `<div style="color: #e53e3e; text-align: center;">❌ Ошибка: ${error.message}</div>`;
+    }
+}
+
+		// Обнови showTab чтобы загружать данные при переключении
+		const originalShowTab = showTab;
+		showTab = function(tabName) {
+			originalShowTab(tabName);
+			if (tabName === 'meters') {
+				loadMeters();
+			}
+		};
+
+		
+		async function pingIp(ip, event) {
+			event.preventDefault();
+			
+			// Удаляем старый модал если есть
+			const existingModal = document.getElementById('pingModal');
+			if (existingModal) {
+				existingModal.remove();
+			}
+			
+			const modal = document.createElement('div');
+			modal.id = 'pingModal';
+			modal.style.cssText = `
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0,0,0,0.7);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				z-index: 2000;
+			`;
+			
+			const content = document.createElement('div');
+			content.style.cssText = `
+				background: white;
+				padding: 20px;
+				border-radius: 15px;
+				min-width: 300px;
+				text-align: center;
+				box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+			`;
+			content.innerHTML = `
+				<h3>🏓 PING ${ip}</h3>
+				<div style="padding: 20px;">
+					<div class="loading">⏳ Проверка...</div>
+				</div>
+				<button id="pingModalCloseBtn" style="margin-top: 15px; padding: 8px 20px; background: #4299e1; color: white; border: none; border-radius: 8px; cursor: pointer;">Закрыть</button>
+			`;
+			
+			modal.appendChild(content);
+			document.body.appendChild(modal);
+			
+			// Закрытие по кнопке
+			document.getElementById('pingModalCloseBtn').onclick = function() {
+				modal.remove();
+			};
+			
+			// Закрытие по клику на фон
+			modal.onclick = function(e) {
+				if (e.target === modal) {
+					modal.remove();
+				}
+			};
+			
+			try {
+				const response = await fetch('/api/ping', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ ip: ip })
+				});
+				const data = await response.json();
+				
+				const resultDiv = content.querySelector('div div');
+				if (data.success && data.result) {
+					const r = data.result;
+					const statusColor = r.alive ? '#38a169' : '#e53e3e';
+					resultDiv.innerHTML = `
+						<div style="font-size: 48px; margin-bottom: 10px;">${r.alive ? '✅' : '❌'}</div>
+						<div style="font-size: 16px; color: ${statusColor}; margin-bottom: 10px;">${r.message}</div>
+						<div style="font-size: 12px; color: #718096;">Задержка: ${r.latency}</div>
+					`;
+				} else {
+					resultDiv.innerHTML = `<div style="color: #e53e3e;">❌ Ошибка: ${data.message || 'Неизвестная ошибка'}</div>`;
+				}
+			} catch (error) {
+				const resultDiv = content.querySelector('div div');
+				resultDiv.innerHTML = `<div style="color: #e53e3e;">❌ Ошибка: ${error.message}</div>`;
+			}
+		}
+		
+		
+        async function executeRestart() {
+            const urlToRestart = pendingRestartUrl;
+            if (!urlToRestart) return;
+            
+            isRestarting = true;
+            closeModal();
+            
+            const btn = document.querySelector(`.btn-restart[data-url="${urlToRestart}"]`);
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '⏳ Перезапуск...';
+            }
+            
+            try {
+                const response = await fetch('/api/restart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ server: urlToRestart })
+                });
+                const data = await response.json();
+                
+                if (btn) {
+                    if (data.success) {
+                        btn.textContent = '✅ Успешно';
+                        setTimeout(() => {
+                            btn.textContent = '⚡ Перезапустить IServer';
+                            btn.disabled = false;
+                            isRestarting = false;
+                            loadData();
+                        }, 3000);
+                    } else {
+                        btn.textContent = '❌ Ошибка';
+                        setTimeout(() => {
+                            btn.textContent = '⚡ Перезапустить IServer';
+                            btn.disabled = false;
+                            isRestarting = false;
+                        }, 3000);
+                    }
+                }
+            } catch (error) {
+                if (btn) {
+                    btn.textContent = '❌ Ошибка сети';
+                    setTimeout(() => {
+                        btn.textContent = '⚡ Перезапустить IServer';
+                        btn.disabled = false;
+                        isRestarting = false;
+                    }, 3000);
+                }
+            }
+        }
+        
+		async function executeStop() {
+			const urlToStop = pendingStopUrl;
+			if (!urlToStop) return;
+			
+			isRestarting = true;
+			closeModal();
+			
+			const btn = document.querySelector(`.btn-stop[data-url="${urlToStop}"]`);
+			if (btn) {
+				btn.disabled = true;
+				btn.textContent = '⏳ Остановка...';
+			}
+			
+			try {
+				const response = await fetch('/api/stop', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ server: urlToStop })
+				});
+				const data = await response.json();
+				
+				if (btn) {
+					if (data.success) {
+						btn.textContent = '✅ Остановлен';
+						setTimeout(() => {
+							btn.textContent = '🛑 Остановить';
+							btn.disabled = false;
+							isRestarting = false;
+							loadData();
+						}, 3000);
+					} else {
+						btn.textContent = '❌ Ошибка';
+						setTimeout(() => {
+							btn.textContent = '🛑 Остановить';
+							btn.disabled = false;
+							isRestarting = false;
+						}, 3000);
+					}
+				}
+			} catch (error) {
+				if (btn) {
+					btn.textContent = '❌ Ошибка сети';
+					setTimeout(() => {
+						btn.textContent = '🛑 Остановить';
+						btn.disabled = false;
+						isRestarting = false;
+					}, 3000);
+				}
+			}
+			pendingStopUrl = null;
+		}
+		
+        function getApiStatusClass(apiAlive, apiUser) {
+            if (!apiAlive) return 'status-error';
+            if (apiUser && apiUser.includes('-a-')) return 'status-good';
+            return 'status-error';
+        }
+        
+        function getApiStatusText(apiAlive, apiPid, apiUser) {
+            if (!apiAlive) return '❌ API не отвечает';
+            if (apiUser && apiUser.includes('-a-')) {
+                return `✅ API запущен (PID: ${apiPid}) [${escapeHtml(apiUser)}]`;
+            }
+            return `⚠️ API запущен (PID: ${apiPid}) [${escapeHtml(apiUser)}] - не администратор!`;
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('/api/full-status');
+                const data = await response.json();
+                renderDashboard(data);
+                document.getElementById('lastUpdate').textContent = formatTime(new Date());
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                document.getElementById('dashboard').innerHTML = '<div class="loading">❌ Ошибка подключения к серверу мониторинга</div>';
+            }
+        }
+        
+        function renderDashboard(data) {
+            const dashboard = document.getElementById('dashboard');
+            
+            if (!data.servers || data.servers.length === 0) {
+                dashboard.innerHTML = '<div class="loading">Нет данных о серверах</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            for (let i = 0; i < data.servers.length; i++) {
+                const s = data.servers[i];
+                html += `
+                    <div class="server-card">
+                        <div class="server-header">
+                            <h2>🖥️ ${escapeHtml(s.name)}</h2>
+                            <div class="address">${escapeHtml(s.address)}</div>
+                        </div>
+                        <div class="server-body">
+							<div class="section">
+								<h3>📊 Статус сервера</h3>
+								<div class="info-row">
+									<span class="info-label">Процесс IServer.exe:</span>
+									<span class="info-value ${s.server_alive ? 'status-good' : 'status-error'}">
+										${s.server_alive ? '✅ Запущен' : '🔴 Не запущен'}
+									</span>
+								</div>
+								<div class="info-row">
+									<span class="info-label">Процесс Web_Bee.Api:</span>
+									<span class="info-value ${getApiStatusClass(s.api_alive, s.api_user)}">
+										${getApiStatusText(s.api_alive, s.api_pid, s.api_user)}
+									</span>
+								</div>
+								${s.server_error ? `
+								<div class="info-row">
+									<span class="info-label">Ошибка:</span>
+									<span class="info-value status-error">${escapeHtml(s.server_error)}</span>
+								</div>
+								` : ''}
+								<div class="info-row">
+									<span class="info-label">Последняя проверка:</span>
+									<span class="info-value">${formatDateTime(s.last_check)}</span>
+								</div>
+								<div style="display: flex; gap: 10px; margin-top: 10px;">
+									<button class="btn-restart" data-url="${s.address}" 
+										onclick="${s.api_alive && s.api_user && s.api_user.includes('-a-') ? `showRestartConfirm('${s.address}', '${escapeHtml(s.name)}')` : ''}"
+										${!(s.api_alive && s.api_user && s.api_user.includes('-a-')) ? 'disabled' : ''}
+										title="${!(s.api_alive && s.api_user && s.api_user.includes('-a-')) ? 'Только для администратора' : ''}">
+										⚡ Перезапустить
+									</button>
+									<button class="btn-stop" data-url="${s.address}" 
+										onclick="${s.api_alive && s.api_user && s.api_user.includes('-a-') && s.server_alive ? `showStopConfirm('${s.address}', '${escapeHtml(s.name)}')` : ''}"
+										${!(s.api_alive && s.api_user && s.api_user.includes('-a-') && s.server_alive) ? 'disabled' : ''}
+										title="${!(s.api_alive && s.api_user && s.api_user.includes('-a-') && s.server_alive) ? (s.server_alive ? 'Только для администратора' : 'IServer не запущен') : ''}">
+										🛑 Остановить
+									</button>
+								</div>
+							</div>
+                            
+                            <div class="section">
+                                <h3>⏱️ Синхронизация времени</h3>
+                                <div class="info-row">
+                                    <span class="info-label">Статус: (< 3 сек)</span>
+                                    <span class="info-value ${getStatusClass(s.time_status)}">
+                                        ${getStatusText(s.time_status)}
+                                    </span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Разница времени:</span>
+                                    <span class="info-value">${formatTimeDiff(s.time_diff_ns || 0)}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Системное время:</span>
+                                    <span class="info-value">${formatDateTime(data.system_time)}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="section" id="db-section-${i}">
+                                <h3>🗄️ База данных</h3>
+                                <div class="loading">Загрузка данных БД...</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            dashboard.innerHTML = html;
+            
+            for (let i = 0; i < data.servers.length; i++) {
+                loadDbData(i, data.servers[i].address);
+            }
+        }
+        
+        async function loadDbData(index, serverUrl) {
+            const section = document.getElementById(`db-section-${index}`);
+            if (!section) return;
+            
+            try {
+                const healthResp = await fetch(`/api/db-health?server=${encodeURIComponent(serverUrl)}`);
+                const health = await healthResp.json();
+                
+                const delaysResp = await fetch(`/api/data-delays?server=${encodeURIComponent(serverUrl)}`);
+                const delays = await delaysResp.json();
+                
+                let html = `
+                   <div class="info-row">
+                        <span class="info-label">SQL соединение:</span>
+                        <span class="info-value ${health.success ? 'status-good' : 'status-error'}">
+                            ${health.success ? '✅ Подключено' : '❌ Ошибка'}
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Отправка макета 80020, XML сообщения:</span>
+                        <span class="info-value">${escapeHtml(health.xml_status || 'Н/Д')}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Задержки данных (опрос счетчиков):</span>
+                        <span class="info-value ${delays.has_delays ? 'status-warning' : 'status-good'}">
+                            ${delays.has_delays ? '⚠️ Есть задержки' : '✅ Нет задержек'}
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Точек с задержкой опроса:</span>
+                        <span class="info-value">${delays.delayed_points_count || 0}</span>
+                    </div>
+                `;
+                
+                if (delays.delayed_points && delays.delayed_points.length > 0) {
+                    html += `<div class="delayed-points-list">`;
+                    for (const point of delays.delayed_points) {
+                        html += `
+                            <div class="delayed-point">
+                                <strong>${escapeHtml(point.name)}</strong><br>
+                                Последние данные: ${formatDateTime(point.last_date)}<br>
+                                Задержка: ${point.delay_hours.toFixed(2)} ч
+                            </div>
+                        `;
+                    }
+                    html += `</div>`;
+                }
+                
+                section.innerHTML = `<h3>🗄️ База данных</h3>${html}`;
+                
+            } catch (error) {
+                section.innerHTML = `
+                    <h3>🗄️ База данных</h3>
+                    <div class="info-row">
+                        <span class="info-label">Статус:</span>
+                        <span class="info-value status-error">❌ Ошибка подключения</span>
+                    </div>
+                `;
+            }
+        }
+        
+		async function testModems(type) {
+			const tcpBtn = document.getElementById('testTcpBtn');
+			const pingBtn = document.getElementById('testPingBtn');
+			const tbody = document.getElementById('modemsTableBody');
+			const infoDiv = document.getElementById('testTypeInfo');
+			
+			if (type === 'tcp') {
+				tcpBtn.disabled = true;
+				tcpBtn.textContent = '⏳ Тест TCP...';
+				pingBtn.disabled = true;
+				//infoDiv.innerHTML = '<span style="color: #e53e3e; animation: blink 1s infinite;">🔄 Тестирование TCP соединения (порт)... (таймаут 10 секунд)</span>';
+				infoDiv.innerHTML = '<div class="info-testing">🔄 Тестирование TCP соединения (порт)... (таймаут 10 секунд)</div>';
+			} else {
+				pingBtn.disabled = true;
+				pingBtn.textContent = '⏳ Тест PING...';
+				tcpBtn.disabled = true;
+				//infoDiv.innerHTML = '<span style="color: #e53e3e; animation: blink 1s infinite;">🔄 Тестирование PING (ICMP)... (длительность теста до 30 секунд)</span>';
+				infoDiv.innerHTML = '<div class="info-testing">🔄 Тестирование PING (ICMP)... (длительность теста до 30 секунд)</div>';
+			}
+			
+			try {
+				const url = type === 'tcp' ? '/api/modems-tcp-test' : '/api/modems-ping-test';
+				const response = await fetch(url, { method: 'POST' });
+				const data = await response.json();
+				
+				if (data.success && data.results) {
+					const groups = {};
+					data.results.forEach(r => {
+						if (!groups[r.group]) groups[r.group] = [];
+						groups[r.group].push(r);
+					});
+					
+					let html = '';
+					for (const [group, modems] of Object.entries(groups)) {
+						html += `<tr class="group-row"><th colspan="6">📡 Группа: ${escapeHtml(group)}</th></tr>`;
+						for (const m of modems) {
+							const statusClass = m.alive ? 'status-good' : 'status-error';
+							const statusText = m.alive ? m.message : '❌ ' + (m.message.substring(0, 50) || 'Недоступен');
+							html += `
+								<tr>
+									<td>${escapeHtml(m.name)}</td>
+									
+									<td><a href="#" class="ping-ip" data-ip="${m.ip}" onclick="pingIp('${m.ip}', event); return false;">${m.ip}<\/a><\/td>
+									<td>${m.port}</td>
+									<td class="${statusClass}">${statusText}</td>
+									<td>${m.latency || '—'}</td>
+								</tr>
+							`;
+						}
+					}
+					tbody.innerHTML = html;
+					infoDiv.innerHTML = `✅ Тест ${type.toUpperCase()} завершен. Доступно: ${data.results.filter(r => r.alive).length} из ${data.results.length}`;
+				} else {
+					tbody.innerHTML = `<tr><td colspan="6" class="status-error">❌ Ошибка: ${data.error || 'Неизвестная ошибка'}</td></tr>`;
+					infoDiv.innerHTML = '❌ Ошибка тестирования';
+				}
+			} catch (error) {
+				tbody.innerHTML = `<tr><td colspan="6" class="status-error">❌ Ошибка: ${error.message}</td></tr>`;
+				infoDiv.innerHTML = '❌ Ошибка подключения к серверу';
+			}
+			
+			if (type === 'tcp') {
+				tcpBtn.disabled = false;
+				tcpBtn.textContent = '🔌 Тест TCP (порт)';
+				pingBtn.disabled = false;
+			} else {
+				pingBtn.disabled = false;
+				pingBtn.textContent = '📡 Тест PING';
+				tcpBtn.disabled = false;
+			}
+		}
+        
+		function showApiDoc() {
+			const modal = document.getElementById('apiDocModal');
+			const content = document.getElementById('apiDocContent');
+			modal.style.display = 'flex';
+			
+			// Пытаемся загрузить из файла api.txt
+			fetch('/api/doc')
+				.then(response => response.text())
+				.then(text => {
+					content.innerHTML = `<pre style="white-space: pre-wrap; font-family: monospace; font-size: 11px; background: #f8fafc; padding: 15px; border-radius: 8px; overflow-x: auto;">${escapeHtml(text)}</pre>`;
+				})
+				.catch(() => {
+					// Если файл не найден, показываем встроенную документацию
+					content.innerHTML = `
+						<h4>📊 Эндпоинты мониторинга</h4>
+						<p><strong>GET /health</strong> - Проверка здоровья IServer</p>
+						<p><strong>POST /restart</strong> - Перезапуск IServer.exe</p>
+						<p><strong>GET /time-diff</strong> - Синхронизация времени</p>
+						<p><strong>GET /IServer/db-health</strong> - Здоровье БД</p>
+						<p><strong>GET /IServer/data-delays</strong> - Задержки данных</p>
+						<p><strong>GET /debug/privileges</strong> - Права доступа</p>
+						<hr>
+						<p><strong>URL:</strong> http://[IP]:9200</p>
+						<p><strong>Формат:</strong> JSON</p>
+					`;
+				});
+		}
+
+		function closeApiDoc() {
+			document.getElementById('apiDocModal').style.display = 'none';
+		}
+
+		// Закрытие по клику вне окна
+		window.onclick = function(event) {
+			const modal = document.getElementById('apiDocModal');
+			if (event.target === modal) {
+				modal.style.display = 'none';
+			}
+		}
+		
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }  
+		
+        function escapeJsString(str) {
+			if (!str) return '';
+			return str.replace(/\\/g, '\\\\')
+					  .replace(/'/g, "\\'")
+					  .replace(/"/g, '\\"')
+					  .replace(/\n/g, '\\n')
+					  .replace(/\r/g, '\\r');
+		}
+		
+        function refresh() {
+            loadData();
+        }
+        
+        // Запуск
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "servers": [
+    {
+      "name": "Сервер `Береза` (10.96.30.62)",
+      "address": "http://10.96.30.62:9200",
+      "port": 9200
+    },
+    {
+      "name": "Сервер `Малые точки` (10.98.30.36)",
+      "address": "http://10.98.30.36:9200",
+      "port": 9200
+    }
+  ],
+  "web_port": ":8090",
+  "check_interval_seconds": 30,
+  "time_diff_threshold_seconds": 3,
+  "scheduler_enabled": true,
+  "restart_times": ["12:44", "02:50"]
+}

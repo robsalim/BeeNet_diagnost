@@ -1,0 +1,963 @@
+{
+  "meters": [
+  {
+    "id": 1,
+    "name": "ПС `Кобальт` 110/35/10 кВ ОРУ-35 кВ 1 с.ш. ф. `ЮБЗ-Новая`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9202",
+    "meter_type": "СЭТ",
+    "meter_number": "45",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 2,
+    "name": "ПС `Кобальт` 110/35/10 кВ ОРУ-35 кВ 2 с.ш. ф. `Новая`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9202",
+    "meter_type": "СЭТ",
+    "meter_number": "161",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 3,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 1 с.ш. яч. 9 ф. `РП-2 10 кВ `УЗПС` ввод 1",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9203",
+    "meter_type": "СЭТ",
+    "meter_number": "19",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 4,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 1 с.ш. яч. 11 ф. `РП-3 10 кВ `УЗПС` ввод 1",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9203",
+    "meter_type": "СЭТ",
+    "meter_number": "210",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 5,
+    "name": "ПС 110 кВ Кобальт, ЗРУ-10 кВ, 1 с.ш. 10 кВ, яч.17",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9203",
+    "meter_type": "СЭТ",
+    "meter_number": "24",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 6,
+    "name": "ПС 110 кВ Кобальт, ЗРУ-10 кВ, 2 с.ш. 10 кВ, яч.12",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9204",
+    "meter_type": "СЭТ",
+    "meter_number": "9",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 7,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 2 с.ш. яч. 14 ф. `РП-2 10 кВ `УЗПС` ввод 2",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9204",
+    "meter_type": "СЭТ",
+    "meter_number": "179",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 8,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 2 с.ш. яч. 18 ф. `РП-3 10 кВ `УЗПС` ввод 2",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9204",
+    "meter_type": "СЭТ",
+    "meter_number": "59",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 9,
+    "name": "ПС 110 кВ Кобальт, ЗРУ-10 кВ, 3 с.ш. 10 кВ, яч.55, КЛ-10 кВ",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9205",
+    "meter_type": "СЭТ",
+    "meter_number": "133",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 10,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 3 с.ш. яч. 33 ф. `Теплит 1`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9205",
+    "meter_type": "СЭТ",
+    "meter_number": "221",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 11,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 3 с.ш. яч. 39 ф. `Уралбытхим`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9205",
+    "meter_type": "СЭТ",
+    "meter_number": "4",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 12,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 3 с.ш. яч. 41 ф. `Дельта Центр`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9205",
+    "meter_type": "СЭТ",
+    "meter_number": "95",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 13,
+    "name": "ПС 110 кВ Кобальт, ЗРУ-10 кВ, 3 с.ш. 10 кВ, яч.49",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9205",
+    "meter_type": "СЭТ",
+    "meter_number": "62",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 14,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 3 с.ш. яч. 51 ф. `АС-Бюро 1`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9205",
+    "meter_type": "СЭТ",
+    "meter_number": "140",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 15,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 3 с.ш. яч. 53 ф. `ООО Ковры Урала 1`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9205",
+    "meter_type": "СЭТ",
+    "meter_number": "106",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 16,
+    "name": "ПС 110 кВ Кобальт, ЗРУ-10 кВ, 4 с.ш. 10 кВ, яч.38, КЛ-10 кВ",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9206",
+    "meter_type": "СЭТ",
+    "meter_number": "9",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 17,
+    "name": "ПС 110 кВ Кобальт, ЗРУ-10 кВ, 4 с.ш. 10 кВ, яч.32",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9206",
+    "meter_type": "СЭТ",
+    "meter_number": "24",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 18,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 4 с.ш. яч. 40 ф. `ЗАО УЭС`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9206",
+    "meter_type": "СЭТ",
+    "meter_number": "189",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 19,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 4 с.ш. яч. 48 ф. `АС-Бюро 2`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9206",
+    "meter_type": "СЭТ",
+    "meter_number": "57",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 20,
+    "name": "ПС `Кобальт` 110/35/10 ЗРУ-10 кВ 4 с.ш. яч. 54 ф. `Форпост`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9206",
+    "meter_type": "СЭТ",
+    "meter_number": "47",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 21,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 4 с.ш. яч. 56 ф. `ООО Ковры Урала 2`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9206",
+    "meter_type": "СЭТ",
+    "meter_number": "98",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 22,
+    "name": "ПС `Кобальт` 110/35/10 кВ ЗРУ-10 кВ 4 с.ш. яч. 58 ф. `Теплит 2`",
+    "modem_location": "Кобальт ОПУ",
+    "modem_ip": "10.96.12.145",
+    "connection_port": "10.96.30.62:9206",
+    "meter_type": "СЭТ",
+    "meter_number": "5",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 23,
+    "name": "ПС «Елисеевская» 110/10/10 кВ. ОРУ 110 кВ. Ввод 1. Опора № 49",
+    "modem_location": "ПС Елисеевская ОПУ",
+    "modem_ip": "10.96.12.155",
+    "connection_port": "10.96.30.62:9210",
+    "meter_type": "СЭТ",
+    "meter_number": "10",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 24,
+    "name": "ПС «Елисеевская» 110/10/10 кВ. ОРУ 110 кВ. Ввод 2. Опора № 49",
+    "modem_location": "ПС Елисеевская ОПУ",
+    "modem_ip": "10.96.12.155",
+    "connection_port": "10.96.30.62:9210",
+    "meter_type": "СЭТ",
+    "meter_number": "117",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 25,
+    "name": "ПС «Елисеевская» 110/10/10 кВ. ЗРУ 10 кВ. яч. 302. РП-1 ОАО «Линда Газ Рус»",
+    "modem_location": "ПС Елисеевская ОПУ",
+    "modem_ip": "10.96.12.142",
+    "connection_port": "10.96.30.62:9210",
+    "meter_type": "СЭТ",
+    "meter_number": "70",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 26,
+    "name": "ПС «Елисеевская» 110/10/10 кВ. ЗРУ 10 кВ. яч. 402. РП-2 ОАО «Линда Газ Рус»",
+    "modem_location": "ПС Елисеевская ОПУ",
+    "modem_ip": "10.96.12.142",
+    "connection_port": "10.96.30.62:9210",
+    "meter_type": "СЭТ",
+    "meter_number": "90",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 27,
+    "name": "ПС «Елисеевская» 110/10/10 кВ. ЗРУ 10 кВ. яч. 312.",
+    "modem_location": "ПС Елисеевская ОПУ",
+    "modem_ip": "10.96.12.142",
+    "connection_port": "10.96.30.62:9210",
+    "meter_type": "СЭТ",
+    "meter_number": "78",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 28,
+    "name": "ПС «Елисеевская» 110/10/10 кВ. ЗРУ 10 кВ. яч. 412.",
+    "modem_location": "ПС Елисеевская ОПУ",
+    "modem_ip": "10.96.12.142",
+    "connection_port": "10.96.30.62:9210",
+    "meter_type": "СЭТ",
+    "meter_number": "29",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 29,
+    "name": "ПС «Елисеевская» 110/10/10 кВ. ЗРУ 10 кВ. яч.307. ИП О.А. Веденева-1",
+    "modem_location": "ПС Елисеевская ОПУ",
+    "modem_ip": "10.96.12.142",
+    "connection_port": "10.96.30.62:9210",
+    "meter_type": "СЭТ",
+    "meter_number": "134",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 30,
+    "name": "ПС «Елисеевская» 110/10/10 кВ. ЗРУ 10 кВ. Яч. 308 ф. «КейПоинтЕкатеринбург, Ввод-1»",
+    "modem_location": "ПС Елисеевская ОПУ",
+    "modem_ip": "10.96.12.142",
+    "connection_port": "10.96.30.62:9210",
+    "meter_type": "СЭТ",
+    "meter_number": "11",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 31,
+    "name": "ПС «Елисеевская» 110/10/10 кВ. ЗРУ 10 кВ. яч.407. ИП О.А. Веденева-2",
+    "modem_location": "ПС Елисеевская ОПУ",
+    "modem_ip": "10.96.12.142",
+    "connection_port": "10.96.30.62:9210",
+    "meter_type": "СЭТ",
+    "meter_number": "9",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 32,
+    "name": "ПС «Елисеевская» 110/10/10 кВ. ЗРУ 10 кВ. Яч. 408 ф. «КейПоинтЕкатеринбург, Ввод-2»",
+    "modem_location": "ПС Елисеевская ОПУ",
+    "modem_ip": "10.96.12.142",
+    "connection_port": "10.96.30.62:9210",
+    "meter_type": "СЭТ",
+    "meter_number": "138",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 33,
+    "name": "ПС `Кобальт` 110/35/10 кВ КТП 10/0,4 кВ `ЦЗЛ` 1 с.ш. ф. `Золотой Джокер`",
+    "modem_location": "ЦЗЛ 1 эт",
+    "modem_ip": "10.96.23.227",
+    "connection_port": "10.96.30.62:9212",
+    "meter_type": "СЭТ",
+    "meter_number": "60",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 34,
+    "name": "КТП 10/0,4 кВ `Котельная` 1 СШ 0,4 кВ яч. 3-2 ф. `Пождепо`_70",
+    "modem_location": "Котельная 1эт",
+    "modem_ip": "10.96.12.254",
+    "connection_port": "10.96.30.62:9238",
+    "meter_type": "ПСЧ",
+    "meter_number": "70",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 35,
+    "name": "ПС 110/35/10 Кобальт  I с.ш. 10 кВ. яч. № 17 в РП-1, ИП Силин А.Г._82",
+    "modem_location": "Котельная 1эт",
+    "modem_ip": "10.96.12.254",
+    "connection_port": "10.96.30.62:9238",
+    "meter_type": "СЭТ",
+    "meter_number": "82",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 36,
+    "name": "КТП Котельная РУ-0,4кВ Мегафон",
+    "modem_location": "Котельная 1эт",
+    "modem_ip": "10.96.12.244",
+    "connection_port": "10.96.30.62:9239",
+    "meter_type": "Меркурий 230",
+    "meter_number": "10",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 37,
+    "name": "Щит 0,4 кВ Билайн 1, КЛ-0,4 кВ от КТП 10 кВ Котельная",
+    "modem_location": "Котельная 1эт",
+    "modem_ip": "10.96.12.244",
+    "connection_port": "10.96.30.62:9239",
+    "meter_type": "Меркурий 230",
+    "meter_number": "9",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 38,
+    "name": "Щит 0,4 кВ Билайн 2, КЛ-0,4 кВ от КТП 10 кВ Котельная",
+    "modem_location": "Котельная 1эт",
+    "modem_ip": "10.96.12.244",
+    "connection_port": "10.96.30.62:9239",
+    "meter_type": "Меркурий 230",
+    "meter_number": "112",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 39,
+    "name": "ЩП-1 0,4 кВ Помещение Базовой станции сотовой связи ООО `Екатеринбург-2000`, КЛ-0,4 кВ от КТП 10 кВ",
+    "modem_location": "Мотив будка",
+    "modem_ip": "172.16.56.160",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "55",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 40,
+    "name": "ПС `Кобальт` 110/35/10 кВ РП-5 10 кВ 1 с.ш. яч. 1 ф. `ИП Лопаев-1`",
+    "modem_location": "РП-5",
+    "modem_ip": "172.16.56.161",
+    "connection_port": "сервер 5555",
+    "meter_type": "СЭТ",
+    "meter_number": "200",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 41,
+    "name": "ПС `Кобальт` 110/35/10 кВ РП-5 10 кВ 2 с.ш. яч. 2 ф. `ИП Лопаев-2`",
+    "modem_location": "РП-5",
+    "modem_ip": "172.16.56.161",
+    "connection_port": "сервер 5555",
+    "meter_type": "СЭТ",
+    "meter_number": "207",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 42,
+    "name": "ТП 10 кВ РП-5, РУ-0,4 кВ, 2 с.ш. 0,4 кВ, гр.1, КЛ-0,4 кВ",
+    "modem_location": "РП-5",
+    "modem_ip": "172.16.56.161",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "134",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 43,
+    "name": "КТП 10/0,4 кВ `СПТВ`, 1 СШ 0,4 кВ, А2, ф. ООО `Березовский рыбозавод`",
+    "modem_location": "СПТВ",
+    "modem_ip": "172.16.56.162",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "19",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 44,
+    "name": "КТП 10/0,4 кВ `СПТВ` 2 СШ 0,4 кВ яч.38 ф. ИП Патрушев",
+    "modem_location": "СПТВ",
+    "modem_ip": "172.16.56.162",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "84",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 45,
+    "name": "КТП 10/0,4 кВ `СПТВ` 1 СШ 0,4 кВ ф. ИП Петров",
+    "modem_location": "СПТВ",
+    "modem_ip": "172.16.56.162",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "63",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 46,
+    "name": "КТП 10/0,4 кВ `СПТВ` 1 СШ 0,4 кВ ф. ИП Петров Ввод2",
+    "modem_location": "СПТВ",
+    "modem_ip": "172.16.56.162",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "28",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 47,
+    "name": "РП-4 10 кВ, 1 с.ш. 10 кВ, яч.7",
+    "modem_location": "РП-4",
+    "modem_ip": "172.16.56.164",
+    "connection_port": "сервер 5555",
+    "meter_type": "СЭТ",
+    "meter_number": "94",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 48,
+    "name": "РП-4 10 кВ, 1 с.ш. 10 кВ, яч.9",
+    "modem_location": "РП-4",
+    "modem_ip": "172.16.56.164",
+    "connection_port": "сервер 5555",
+    "meter_type": "СЭТ",
+    "meter_number": "89",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 49,
+    "name": "РП-4 10 кВ, 2 с.ш. 10 кВ, яч.10",
+    "modem_location": "РП-4",
+    "modem_ip": "172.16.56.164",
+    "connection_port": "сервер 5555",
+    "meter_type": "СЭТ",
+    "meter_number": "4",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 50,
+    "name": "РП-4 10 кВ, 2 с.ш. 10 кВ, яч.8",
+    "modem_location": "РП-4",
+    "modem_ip": "172.16.56.164",
+    "connection_port": "сервер 5555",
+    "meter_type": "СЭТ",
+    "meter_number": "57",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 51,
+    "name": "ПС `Кобальт` 110/35/10 кВ ТП 10/0,4 кВ `Мобиль` 1 с.ш. ф. 1.1 `Брусника-Урал`",
+    "modem_location": "ТП Мобиль (Брусника)",
+    "modem_ip": "172.16.56.165",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "5",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 52,
+    "name": "ПС `Кобальт` 110/35/10 кВ ТП 10/0,4 кВ `Мобиль` 1 с.ш. ф. 1.2 `Брусника-Урал`",
+    "modem_location": "ТП Мобиль (Брусника)",
+    "modem_ip": "172.16.56.165",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "93",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 53,
+    "name": "ПС `Кобальт` 110/35/10 кВ ТП 10/0,4 кВ `Мобиль` 2 с.ш. ф. 2.1 `Брусника-Урал`",
+    "modem_location": "ТП Мобиль (Брусника)",
+    "modem_ip": "172.16.56.165",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "72",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 54,
+    "name": "ПС `Кобальт` 110/35/10 кВ ТП 10/0,4 кВ `Мобиль` 2 с.ш. ф. 2.2 `Брусника-Урал`",
+    "modem_location": "ТП Мобиль (Брусника)",
+    "modem_ip": "172.16.56.165",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "226",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 55,
+    "name": "67 - Мобил - Брусника - фидер 1.9",
+    "modem_location": "ТП Мобиль (Брусника)",
+    "modem_ip": "172.16.56.165",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "44",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 56,
+    "name": "68 - Мобил - Брусника - фидер 2.9",
+    "modem_location": "ТП Мобиль (Брусника)",
+    "modem_ip": "172.16.56.165",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "43",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 57,
+    "name": "69 - Мобил - Брусника - ООО Инвестиции ф 1.4",
+    "modem_location": "ТП Мобиль (Брусника)",
+    "modem_ip": "172.16.56.165",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "184",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 58,
+    "name": "70 - Мобил - Брусника - ООО Инвестиции ф 2.4",
+    "modem_location": "ТП Мобиль (Брусника)",
+    "modem_ip": "172.16.56.165",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "26",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 59,
+    "name": "ВРУ-1 0,4 кВ жилого дома Мобиль, КЛ-0,4 кВ от ТП 10 кВ Мобиль",
+    "modem_location": "ВРУ Мобиль",
+    "modem_ip": "172.16.56.166",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "86",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 60,
+    "name": "ВРУ-2 0,4 кВ жилого дома Мобиль, КЛ-0,4 кВ от ТП 10 кВ Мобиль",
+    "modem_location": "ВРУ Мобиль",
+    "modem_ip": "172.16.56.166",
+    "connection_port": "сервер 5555",
+    "meter_type": "ПСЧ",
+    "meter_number": "23",
+    "accounting_type": "Коммерческий"
+  },
+  {
+    "id": 61,
+    "name": "ПС Метиз 220кВ ИП Козырина",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.144",
+    "connection_port": "сервер 5143",
+    "meter_type": "ПСЧ-4ТМ.05МД",
+    "meter_number": "28",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 62,
+    "name": "ВРУ-0,4 кВ здания КНС Водоканал",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.145",
+    "connection_port": "сервер 5143",
+    "meter_type": "СЭТ-4ТМ.02",
+    "meter_number": "29",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 63,
+    "name": "ТП 6 кВ Гараж, ВРУ-0,4 кВ, Ввод 0,4 кВ Т-1",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.146",
+    "connection_port": "сервер 5143",
+    "meter_type": "СЭТ-4ТМ.02",
+    "meter_number": "30",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 64,
+    "name": "ВРУ-0,4 кВ Санаторий Родничок, Ввод 0,4 кВ",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.147",
+    "connection_port": "сервер 5143",
+    "meter_type": "Меркурий 230",
+    "meter_number": "31",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 65,
+    "name": "ТП 6 кВ Экомет, РУ-0,4 кВ, I с.ш. 0,4 кВ, яч.3 `ГТС Плотина`",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.148",
+    "connection_port": "сервер 5143",
+    "meter_type": "Меркурий 230",
+    "meter_number": "32",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 66,
+    "name": "ТП Клубная 0,4 кВ К.Либкнехта, 6",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.150",
+    "connection_port": "сервер 5155",
+    "meter_type": "СЭТ-4ТМ.02",
+    "meter_number": "21",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 67,
+    "name": "ТП РСЦ 0,4 кВ ИП Дубровин",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.151",
+    "connection_port": "сервер 5155",
+    "meter_type": "СЭТ-4ТМ.02",
+    "meter_number": "70",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 68,
+    "name": "ТП РСЦ 0,4 кВ РСЦ",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.151",
+    "connection_port": "сервер 5155",
+    "meter_type": "СЭТ-4ТМ.02",
+    "meter_number": "65",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 69,
+    "name": "ТП Клубная 0,4 кВ ТД Карат Столовая №6",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.152",
+    "connection_port": "сервер 5155",
+    "meter_type": "СЭТ-4ТМ.03М",
+    "meter_number": "87",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 70,
+    "name": "ТП Клубная 0,4 кВ К.Либкнехта, 1",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.153",
+    "connection_port": "сервер 5155",
+    "meter_type": "СЭТ-4ТМ.02",
+    "meter_number": "18",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 71,
+    "name": "ТП Клубная 0,4 кВ Ввод",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.153",
+    "connection_port": "сервер 5155",
+    "meter_type": "СЭТ-4ТМ.03М",
+    "meter_number": "39",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 72,
+    "name": "ТП Клубная 0,4 кВ К.Либкнехта, 3",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.154",
+    "connection_port": "сервер 5155",
+    "meter_type": "СЭТ-4ТМ.02",
+    "meter_number": "76",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 73,
+    "name": "ТП-7621 6 кВ, Ввод 0,4 кВ Т-1 Лесопилка",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.168",
+    "connection_port": "сервер 5167",
+    "meter_type": "СЭТ-4ТМ.03М",
+    "meter_number": "42",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 74,
+    "name": "ТП 6 кВ Птицефабрика, РУ-6 кВ, ф.31",
+    "modem_location": "Ревда",
+    "modem_ip": "172.16.56.169",
+    "connection_port": "сервер 5167",
+    "meter_type": "СЭТ-4ТМ.03М",
+    "meter_number": "43",
+    "accounting_type": "Коммерческий, малые точки"
+  },
+  {
+    "id": 75,
+    "name": "КТП-1 СПЦ. яч № 1 \"Резервный ввод 1 ВРУ\"",
+    "modem_location": "КТП-1 СПЦ",
+    "modem_ip": "10.96.13.237",
+    "connection_port": "10.98.28.58:4041",
+    "meter_type": "ПСЧ",
+    "meter_number": "1",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 76,
+    "name": "КТП-2 СПЦ. яч № 1 \"Основной ввод 1 ВРУ\"",
+    "modem_location": "КТП-2 СПЦ",
+    "modem_ip": "10.96.13.238",
+    "connection_port": "10.98.28.58:4042",
+    "meter_type": "ПСЧ",
+    "meter_number": "2",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 77,
+    "name": "КТП-2 СПЦ. яч № 4 \"Основной ввод 2 ВРУ\"",
+    "modem_location": "КТП-2 СПЦ",
+    "modem_ip": "10.96.13.238",
+    "connection_port": "10.98.28.58:4042",
+    "meter_type": "ПСЧ",
+    "meter_number": "3",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 78,
+    "name": "РП-1 10кВ Котельная. яч№1 \"Ввод №1-10кВ КТП Компрессорная\"",
+    "modem_location": "Котельная РП",
+    "modem_ip": "10.96.23.126",
+    "connection_port": "10.98.28.58:4043",
+    "meter_type": "СЭТ",
+    "meter_number": "16",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 79,
+    "name": "РП-1 10кВ Котельная. яч№18 \"Ввод №2-10кВ КТП Компрессорная\"",
+    "modem_location": "Котельная РП",
+    "modem_ip": "10.96.23.126",
+    "connection_port": "10.98.28.58:4043",
+    "meter_type": "СЭТ",
+    "meter_number": "17",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 80,
+    "name": "КТП Компрессорная яч №2 \"1ШУ (Компрессор GA250 №4)\"",
+    "modem_location": "Компрессорная",
+    "modem_ip": "10.96.23.127",
+    "connection_port": "10.98.28.58:4044",
+    "meter_type": "ПСЧ",
+    "meter_number": "18",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 81,
+    "name": "КТП Компрессорная яч №3 \"7ШУ (Осушитель воздуха ВД1800 №2)\"",
+    "modem_location": "Компрессорная",
+    "modem_ip": "10.96.23.127",
+    "connection_port": "10.98.28.58:4044",
+    "meter_type": "ПСЧ",
+    "meter_number": "19",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 82,
+    "name": "КТП Компрессорная яч №6 \"6ШУ (компрессор GA110)\"",
+    "modem_location": "Компрессорная",
+    "modem_ip": "10.96.23.127",
+    "connection_port": "10.98.28.58:4044",
+    "meter_type": "ПСЧ",
+    "meter_number": "21",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 83,
+    "name": "КТП Компрессорная яч №8 \"ПР-2, 1РП (ШР вентиляция, ШР освещение)\"",
+    "modem_location": "Компрессорная",
+    "modem_ip": "10.96.23.127",
+    "connection_port": "10.98.28.58:4044",
+    "meter_type": "ПСЧ",
+    "meter_number": "22",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 84,
+    "name": "КТП Компрессорная яч №10 \"3ШУ (Компрессор GA250 №3)\"",
+    "modem_location": "Компрессорная",
+    "modem_ip": "10.96.23.127",
+    "connection_port": "10.98.28.58:4044",
+    "meter_type": "ПСЧ",
+    "meter_number": "23",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 85,
+    "name": "КТП Компрессорная яч №11 \"8ШУ (осушитель воздуха ВД1800 №1)\"",
+    "modem_location": "Компрессорная",
+    "modem_ip": "10.96.23.127",
+    "connection_port": "10.98.28.58:4044",
+    "meter_type": "ПСЧ",
+    "meter_number": "24",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 86,
+    "name": "КТП Компрессорная яч №13 \"5ШУ (Компрессор GA 180) \"",
+    "modem_location": "Компрессорная",
+    "modem_ip": "10.96.23.127",
+    "connection_port": "10.98.28.58:4044",
+    "meter_type": "ПСЧ",
+    "meter_number": "26",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 87,
+    "name": "КТП-6 СПЦ. яч.№1 \"Ввод-1\"",
+    "modem_location": "КТП-6 СПЦ",
+    "modem_ip": "10.96.13.239",
+    "connection_port": "10.98.28.58:4048",
+    "meter_type": "СЭТ",
+    "meter_number": "28",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 88,
+    "name": "КТП-6 СПЦ. яч.№20 \"Ввод-2\"",
+    "modem_location": "КТП-6 СПЦ",
+    "modem_ip": "10.96.13.239",
+    "connection_port": "10.98.28.58:4048",
+    "meter_type": "СЭТ",
+    "meter_number": "29",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 89,
+    "name": "КТП-6 СПЦ. яч.№3 \"Шкаф М+Е",
+    "modem_location": "КТП-6 СПЦ",
+    "modem_ip": "10.96.13.239",
+    "connection_port": "10.98.28.58:4048",
+    "meter_type": "СЭТ",
+    "meter_number": "30",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 90,
+    "name": "КТП-6 СПЦ. яч.№4 \"Шкаф ШР-1\"",
+    "modem_location": "КТП-6 СПЦ",
+    "modem_ip": "10.96.13.239",
+    "connection_port": "10.98.28.58:4048",
+    "meter_type": "СЭТ",
+    "meter_number": "31",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 91,
+    "name": "КТП-6 СПЦ. яч.№5 \"Шкаф ШВ, ШР-2\"",
+    "modem_location": "КТП-6 СПЦ",
+    "modem_ip": "10.96.13.239",
+    "connection_port": "10.98.28.58:4048",
+    "meter_type": "СЭТ",
+    "meter_number": "32",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 92,
+    "name": "КТП-6 СПЦ. яч.№15 \"Шкаф ША, ШСН\"",
+    "modem_location": "КТП-6 СПЦ",
+    "modem_ip": "10.96.13.239",
+    "connection_port": "10.98.28.58:4048",
+    "meter_type": "СЭТ",
+    "meter_number": "33",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 93,
+    "name": "КТП-6 СПЦ. яч.№13 \"Шкаф Ш553\"",
+    "modem_location": "КТП-6 СПЦ",
+    "modem_ip": "10.96.13.239",
+    "connection_port": "10.98.28.58:4048",
+    "meter_type": "СЭТ",
+    "meter_number": "34",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 94,
+    "name": "КТП-6 СПЦ. яч.№14 \"Шкаф Ш564\"",
+    "modem_location": "КТП-6 СПЦ",
+    "modem_ip": "10.96.13.239",
+    "connection_port": "10.98.28.58:4048",
+    "meter_type": "СЭТ",
+    "meter_number": "35",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 95,
+    "name": "РП-3 яч9 КТП-6 Т-1",
+    "modem_location": "РП-3 СПЦ",
+    "modem_ip": "10.96.13.240",
+    "connection_port": "10.98.28.58:4049",
+    "meter_type": "СЭТ",
+    "meter_number": "36",
+    "accounting_type": "Технический в Ревду"
+  },
+  {
+    "id": 96,
+    "name": "РП-3 яч.28 КТП-6 Т-2",
+    "modem_location": "РП-3 СПЦ",
+    "modem_ip": "10.96.13.240",
+    "connection_port": "10.98.28.58:4049",
+    "meter_type": "СЭТ",
+    "meter_number": "37",
+    "accounting_type": "Технический в Ревду"
+  }
+]}
