@@ -856,16 +856,20 @@ function renderMetersTable(meters) {
             
             // Извлекаем порт из connection_port (последние 4 цифры)
             let meterPort = 0;
-            if (hasServer) {
-                const portMatch = connectionPort.match(/(\d{4})$/);
-                if (portMatch) {
-                    meterPort = parseInt(portMatch[1], 10);
-                }
+            const portMatch = connectionPort.match(/(\d{4})$/);
+            if (portMatch) {
+                meterPort = parseInt(portMatch[1], 10);
             }
             
-            // Номер прибора кликабельный только если есть "сервер"
-            const meterNumberHtml = hasServer && meterPort > 0 ?
-                `<a href="#" class="meter-link" data-ip="${m.modem_ip}" data-port="${meterPort}" data-addr="${m.meter_number}" onclick="checkMeter('${m.modem_ip}', ${meterPort}, ${m.meter_number}, event); return false;">${m.meter_number}</a>` :
+            // Определяем IP для проверки счетчика
+            let checkIp = m.modem_ip;
+            if (!hasServer && meterPort > 0) {
+                checkIp = '127.0.0.1';
+            }
+            
+            // Номер прибора кликабельный для всех, у кого есть порт
+            const meterNumberHtml = meterPort > 0 ?
+                `<a href="#" class="meter-link" data-ip="${checkIp}" data-port="${meterPort}" data-addr="${m.meter_number}" onclick="checkMeter('${checkIp}', ${meterPort}, ${m.meter_number}, event); return false;">${m.meter_number}</a>` :
                 m.meter_number;
             
             html += `
