@@ -71,14 +71,23 @@
 
 ## API Endpoints
 Метод	Endpoint				Описание
+
 GET		/api/full-status		Полный статус всех серверов
+
 GET		/api/all-servers		Упрощенный статус серверов
+
 GET		/api/db-health			Статус БД для сервера
+
 GET		/api/data-delays		Задержки данных для сервера
+
 GET		/api/privileges			Информация о пользователе
+
 POST	/api/restart			Перезапуск IServer
+
 POST	/api/modems-tcp-test	TCP тест модемов
+
 POST	/api/modems-ping-test	PING тест модемов
+
 
 ## Логирование
 Логи выводятся в консоль:
