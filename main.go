@@ -9,6 +9,9 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"regexp"
+	"strconv"
+	"strings"
 )
 
 func main() {
@@ -74,7 +77,8 @@ func startComponents(cfg ServersConfig) {
 	//Запуск планировщика
 	go StartScheduler()
 	
-
+	// Запускаем TCP серверы для всех портов из списка приборов
+	go startTCPServersFromMeters()
 
 
 
@@ -94,9 +98,10 @@ func startComponents(cfg ServersConfig) {
 		http.HandleFunc("/api/modems-ping-test", handleModemsPingTestAPI)
 		http.HandleFunc("/api/ping", handlePingAPI)
 		http.HandleFunc("/api/check-meter", handleCheckMeter)
-		
+		http.HandleFunc("/api/check-local-port", handleCheckLocalPort)
+				
 		http.HandleFunc("/api/meters", handleMetersAPI)
-		
+
 		
 		http.HandleFunc("/api/doc", func(w http.ResponseWriter, r *http.Request) {
 			http.ServeFile(w, r, "api.txt")
@@ -176,5 +181,41 @@ func getNetworkInfo(port string) {
 
 			fmt.Printf("  • http://%s%s\n", ip.String(), port)
 		}
+	}
+}
+
+func startTCPServersFromMeters() {
+	meters := GetMetersConfig()
+	ports := make(map[int]bool)
+	
+	// Собираем уникальные порты из всех приборов (только где нет "сервер")
+	for _, meter := range meters.Meters {
+		connectionPort := meter.ConnectionPort
+		
+		// Пропускаем, если есть слово "сервер" (это удаленные модемы, не локальные)
+		if strings.Contains(strings.ToLower(connectionPort), "сервер") {
+			continue
+		}
+		
+		// Извлекаем порт (последние 4 цифры)
+		portMatch := regexp.MustCompile(`(\d{4})$`).FindStringSubmatch(connectionPort)
+		if len(portMatch) > 0 {
+			port, err := strconv.Atoi(portMatch[1])
+			if err == nil {
+				ports[port] = true
+			}
+		}
+	}
+	
+	// Запускаем TCP серверы на каждом порту
+	for port := range ports {
+		go StartTCPServer(port)
+		time.Sleep(100 * time.Millisecond)
+	}
+	
+	if len(ports) > 0 {
+		fmt.Printf("🔌 Запущено TCP серверов на портах: %v\n", ports)
+	} else {
+		fmt.Println("🔌 Нет локальных портов для запуска TCP серверов")
 	}
 }

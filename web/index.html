@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+check-meter<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -828,7 +828,6 @@
 				tbody.innerHTML = `<tr><td colspan="8" class="status-error">❌ Ошибка: ${error.message}</td></tr>`;
 			}
 		}
-
 function renderMetersTable(meters) {
     const tbody = document.getElementById('metersTableBody');
     const searchInput = document.getElementById('meterSearch');
@@ -862,11 +861,13 @@ function renderMetersTable(meters) {
             }
             
             // Определяем IP для проверки счетчика
-            let checkIp = m.modem_ip;
-            if (!hasServer && meterPort > 0) {
-                checkIp = '127.0.0.1';
-            }
-            
+			let checkIp = m.modem_ip;
+			if (!hasServer && meterPort > 0) {
+				checkIp = '127.0.0.1';  // при локальной проверке
+			}
+			
+			
+			
             // Номер прибора кликабельный для всех, у кого есть порт
             const meterNumberHtml = meterPort > 0 ?
                 `<a href="#" class="meter-link" data-ip="${checkIp}" data-port="${meterPort}" data-addr="${m.meter_number}" onclick="checkMeter('${checkIp}', ${meterPort}, ${m.meter_number}, event); return false;">${m.meter_number}</a>` :
@@ -927,10 +928,13 @@ async function checkMeter(ip, port, addr, event) {
         text-align: left;
         box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     `;
+    
+    let checkType = ip === '127.0.0.1' ? 'local' : 'remote';
+    
     content.innerHTML = `
         <h3 style="margin-bottom: 15px;">🔍 Проверка счетчика</h3>
         <div style="padding: 10px; background: #f8fafc; border-radius: 8px; margin-bottom: 15px;">
-            <div><strong>📍 IP модема:</strong> ${ip}</div>
+            <div><strong>📍 Тип проверки:</strong> ${checkType === 'local' ? 'Локальный порт (127.0.0.1)' : 'Удаленный модем'}</div>
             <div><strong>🔌 Порт:</strong> ${port}</div>
             <div><strong>🔢 Адрес счетчика:</strong> ${addr} (0x${addr.toString(16).toUpperCase()})</div>
         </div>
@@ -952,11 +956,22 @@ async function checkMeter(ip, port, addr, event) {
     };
     
     try {
-        const response = await fetch('/api/check-meter', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ip: ip, port: port, addr: addr })
-        });
+        let response;
+        if (ip === '127.0.0.1') {
+            // Локальная проверка счетчика через локальный порт
+            response = await fetch('/api/check-local-port', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ port: port, addr: addr })
+            });
+        } else {
+            // Удаленная проверка счетчика через модем
+            response = await fetch('/api/check-meter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ip: ip, port: port, addr: addr })
+            });
+        }
         const data = await response.json();
         
         const resultDiv = content.querySelector('.meter-check-result');
@@ -974,7 +989,7 @@ async function checkMeter(ip, port, addr, event) {
             resultDiv.innerHTML = `
                 <div style="color: #e53e3e; font-size: 20px; text-align: center;">❌</div>
                 <div style="color: #e53e3e; font-weight: bold; text-align: center;">${data.message}</div>
-                ${data.raw_data ? `<div style="margin-top: 10px; font-family: monospace; font-size: 11px; word-break: break-all;"><strong>📡 Получен ответ:</strong><br>${data.raw_data}</div>` : ''}
+                ${data.raw_data ? `<div style="margin-top: 10px; font-family: monospace; font-size: 11px;"><strong>📡 Получен ответ:</strong><br>${data.raw_data}</div>` : ''}
             `;
         }
     } catch (error) {
@@ -984,6 +999,7 @@ async function checkMeter(ip, port, addr, event) {
         resultDiv.innerHTML = `<div style="color: #e53e3e; text-align: center;">❌ Ошибка: ${error.message}</div>`;
     }
 }
+
 
 		// Обнови showTab чтобы загружать данные при переключении
 		const originalShowTab = showTab;

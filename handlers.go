@@ -338,57 +338,27 @@ func handlePingAPI(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// handleCheckMeter - проверка наличия счетчика
-func handleCheckMeter(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Только POST метод", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var req struct {
-		IP   string `json:"ip"`
-		Port int    `json:"port"`
-		Addr byte   `json:"addr"`
-	}
-	
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"success": false,
-			"message": "Ошибка разбора JSON",
-		})
-		return
-	}
-
-	result := checkMeterPresence(req.IP, req.Port, req.Addr)
-	
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
-}
-
-// checkMeterPresence - проверка наличия счетчика с диагностикой
-func checkMeterPresence(ip string, port int, addr byte) MeterCheckResult {
+// checkMeterPresence - проверка наличия счетчика (оригинальная версия)
+func checkMeterPresence(serverURL string, addr byte) MeterCheckResult {
 	result := MeterCheckResult{
-		IP:   ip,
-		Port: port,
+		IP:   serverURL,
 		Addr: addr,
 	}
 	
-	// 1. Проверка подключения к модему
-	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", ip, port), 5*time.Second)
+	// Подключение
+	conn, err := net.DialTimeout("tcp", serverURL, 5*time.Second)
 	if err != nil {
 		result.Success = false
 		result.Message = fmt.Sprintf("❌ Модем не доступен: %v", err)
 		return result
 	}
 	defer conn.Close()
-	result.Message = "✅ Модем доступен"
 	
-	// 2. Формирование запроса
+	// Эхо-запрос с CRC
 	request := []byte{addr, 0x00}
 	crc := calculateCRC(request)
 	request = append(request, byte(crc&0xFF), byte(crc>>8))
 	
-	// 3. Отправка запроса
 	conn.SetWriteDeadline(time.Now().Add(3 * time.Second))
 	_, err = conn.Write(request)
 	if err != nil {
@@ -397,18 +367,16 @@ func checkMeterPresence(ip string, port int, addr byte) MeterCheckResult {
 		return result
 	}
 	
-	// 4. Чтение ответа
+	// Чтение ответа
 	buf := make([]byte, 100)
 	conn.SetReadDeadline(time.Now().Add(3 * time.Second))
 	n, err := conn.Read(buf)
 	if err != nil {
 		result.Success = false
-		result.Message = fmt.Sprintf("❌ Счетчик НЕ ОТВЕЧАЕТ (таймаут 3 сек): %v", err)
-		result.RawData = ""
+		result.Message = "❌ Счетчик НЕ ОТВЕЧАЕТ"
 		return result
 	}
 	
-	// 5. Анализ ответа
 	response := buf[:n]
 	result.RawData = fmt.Sprintf("% X", response)
 	
@@ -448,13 +416,131 @@ func checkMeterPresence(ip string, port int, addr byte) MeterCheckResult {
 	result.Success = true
 	result.Message = fmt.Sprintf("✅ Счетчик В СЕТИ! (ответ: %d байт)", n)
 	
-	// Если есть данные - добавим расшифровку
 	if n > 4 {
 		dataBytes := response[2 : n-2]
 		result.Message += fmt.Sprintf(" Данные: % X", dataBytes)
 	}
 	
 	return result
+}
+
+
+// handleCheckMeter - проверка счетчика через удаленный модем
+func handleCheckMeter(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Только POST метод", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req struct {
+		IP   string `json:"ip"`
+		Port int    `json:"port"`
+		Addr int    `json:"addr"`
+	}
+	
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+			"message": "Ошибка разбора JSON",
+		})
+		return
+	}
+
+	serverURL := fmt.Sprintf("%s:%d", req.IP, req.Port)
+	result := checkMeterPresence(serverURL, byte(req.Addr))
+	
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+// handleCheckLocalPort - проверка, есть ли подключенный счетчик на порту
+func handleCheckLocalPort(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Только POST метод", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req struct {
+		Port int    `json:"port"`
+		Addr int    `json:"addr"`
+	}
+	
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+			"message": "Ошибка разбора JSON",
+		})
+		return
+	}
+
+	// Проверяем, запущен ли сервер на этом порту
+	tcpServersMu.RLock()
+	_, serverExists := tcpServers[req.Port]
+	tcpServersMu.RUnlock()
+	
+	if !serverExists {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+			"message": fmt.Sprintf("❌ Сервер на порту %d не запущен", req.Port),
+		})
+		return
+	}
+	
+	// Подключаемся к локальному серверу (сами к себе)
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("127.0.0.1:%d", req.Port), 3*time.Second)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+			"message": fmt.Sprintf("❌ Нет подключения на порту %d", req.Port),
+		})
+		return
+	}
+	defer conn.Close()
+	
+	// Отправляем запрос счетчику
+	request := []byte{byte(req.Addr), 0x00}
+	crc := calculateCRC(request)
+	request = append(request, byte(crc&0xFF), byte(crc>>8))
+	
+	conn.SetWriteDeadline(time.Now().Add(3 * time.Second))
+	_, err = conn.Write(request)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+			"message": fmt.Sprintf("❌ Ошибка отправки: %v", err),
+		})
+		return
+	}
+	
+	// Читаем ответ
+	buf := make([]byte, 100)
+	conn.SetReadDeadline(time.Now().Add(3 * time.Second))
+	n, err := conn.Read(buf)
+	
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+			"message": "❌ Счетчик НЕ ОТВЕЧАЕТ",
+		})
+		return
+	}
+	
+	response := buf[:n]
+	
+	// Проверяем ответ
+	if n >= 4 && response[0] == byte(req.Addr) && response[1] == 0x00 {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success":  true,
+			"message":  fmt.Sprintf("✅ Счетчик В СЕТИ! (ответ: %d байт)", n),
+			"raw_data": fmt.Sprintf("% X", response),
+		})
+	} else {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success":  false,
+			"message":  "❌ Неверный ответ от счетчика",
+			"raw_data": fmt.Sprintf("% X", response),
+		})
+	}
 }
 
 // calculateCRC - расчет CRC16
