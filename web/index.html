@@ -547,7 +547,7 @@ check-meter<!DOCTYPE html>
 			<div style="display: flex; gap: 10px;">
 				<button class="tab-btn active" onclick="showTab('monitor')">📊 Мониторинг серверов</button>
 				<button class="tab-btn" onclick="showTab('test')">🔌 Тест модемов (MOXA)</button>
-				<button class="tab-btn" onclick="showTab('meters')">📋 Список приборов учета (96)</button>
+				<button class="tab-btn" onclick="showTab('meters')">📋 Список приборов учета</button>
 			</div>
 			<div style="display: flex; gap: 10px;">
 				<button class="api-doc-btn" onclick="showInstruction()">📖 Инструкция</button>
@@ -1327,6 +1327,9 @@ async function checkMeter(ip, port, addr, event) {
                 const delaysResp = await fetch(`/api/data-delays?server=${encodeURIComponent(serverUrl)}`);
                 const delays = await delaysResp.json();
                 
+				// Проверяем, нужно ли показывать секцию с XML для этого сервера
+				const showXmlRow = !serverUrl.includes('10.96.30.61');
+        
                 let html = `
                    <div class="info-row">
                         <span class="info-label">SQL соединение:</span>
@@ -1334,10 +1337,19 @@ async function checkMeter(ip, port, addr, event) {
                             ${health.success ? '✅ Подключено' : '❌ Ошибка'}
                         </span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">Отправка макета 80020, XML сообщения:</span>
-                        <span class="info-value">${escapeHtml(health.xml_status || 'Н/Д')}</span>
-                    </div>
+					`;
+					
+					// Добавляем строку с XML только если сервер не 10.96.30.61
+					if (showXmlRow) {
+						html += `
+							<div class="info-row">
+								<span class="info-label">XML сообщения:</span>
+								<span class="info-value">${escapeHtml(health.xml_status || 'Н/Д')}</span>
+							</div>
+						`;
+					}
+					
+					html += `
                     <div class="info-row">
                         <span class="info-label">Задержки данных (опрос счетчиков):</span>
                         <span class="info-value ${delays.has_delays ? 'status-warning' : 'status-good'}">
