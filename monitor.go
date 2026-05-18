@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sync"
 	"time"
+	"strings"
 )
 
 // ServerStatus - статус отдельного сервера
@@ -14,6 +15,7 @@ type ServerStatus struct {
 	Name              string         `json:"name"`
 	Address           string         `json:"address"`
 	ServerAlive       bool           `json:"server_alive"`
+	ServerUser        string         `json:"server_user"`      
 	ServerError       string         `json:"server_error,omitempty"`
 	ApiAlive          bool           `json:"api_alive"`
 	ApiPid            int            `json:"api_pid"`
@@ -28,6 +30,15 @@ type ServerStatus struct {
 	HasDataDelays     bool           `json:"has_data_delays"`
 	DelayedPoints     int            `json:"delayed_points_count"`
 	DelayedPointsList []DelayedPoint `json:"delayed_points_list,omitempty"`
+}
+
+// PrivilegesInfo - информация о правах доступа
+type PrivilegesInfo struct {
+    User             string `json:"user"`
+    IsAdministrator  bool   `json:"isAdministrator"`
+    ProcessId        int    `json:"processId"`
+    CurrentDirectory string `json:"currentDirectory"`
+    Error            string `json:"error,omitempty"`
 }
 
 // DelayedPoint - точка с задержкой
@@ -109,14 +120,15 @@ func checkAllServers() {
 func checkServer(server *ServerStatus, cfg ServersConfig) {
 	server.LastCheck = time.Now()
 
-	// 1. Проверяем статус IServer
-	serverAlive, err := checkIServerStatus(server.Address)
-	server.ServerAlive = serverAlive
-	if err != nil {
-		server.ServerError = err.Error()
-	} else {
-		server.ServerError = ""
-	}
+    // 1. Проверяем статус IServer
+    serverAlive, serverUser, err := checkIServerStatus(server.Address)
+    server.ServerAlive = serverAlive
+    server.ServerUser = serverUser
+    if err != nil {
+        server.ServerError = err.Error()
+    } else {
+        server.ServerError = ""
+    }
 
 	// 2. Проверяем Web_Bee.Api (права доступа)
 	apiInfo, err := getPrivilegesForServer(server.Address)
@@ -159,33 +171,59 @@ func checkServer(server *ServerStatus, cfg ServersConfig) {
 }
 
 // checkIServerStatus проверяет статус IServer
-func checkIServerStatus(serverURL string) (bool, error) {
-	client := &http.Client{Timeout: 5 * time.Second}
-	resp, err := client.Get(serverURL + "/health")
-	if err != nil {
-		return false, fmt.Errorf("ошибка подключения: %v", err)
-	}
-	defer resp.Body.Close()
+// checkIServerStatus проверяет статус IServer и возвращает (alive, user, error)
+func checkIServerStatus(serverURL string) (bool, string, error) {
+    client := &http.Client{Timeout: 5 * time.Second}
+    resp, err := client.Get(serverURL + "/health")
+    if err != nil {
+        return false, "", fmt.Errorf("ошибка подключения: %v", err)
+    }
+    defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return false, fmt.Errorf("HTTP статус: %d", resp.StatusCode)
-	}
+    if resp.StatusCode != 200 {
+        return false, "", fmt.Errorf("HTTP статус: %d", resp.StatusCode)
+    }
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return false, fmt.Errorf("ошибка чтения: %v", err)
-	}
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        return false, "", fmt.Errorf("ошибка чтения: %v", err)
+    }
 
-	return string(body) == "🟢 IServer.exe запущен", nil
-}
-
-// PrivilegesInfo - информация о правах доступа
-type PrivilegesInfo struct {
-	User             string `json:"user"`
-	IsAdministrator  bool   `json:"isAdministrator"`
-	ProcessId        int    `json:"processId"`
-	CurrentDirectory string `json:"currentDirectory"`
-	Error            string `json:"error,omitempty"`
+    bodyStr := string(body)
+    
+    // Пробуем распарсить как JSON (новый формат)
+    var healthResp struct {
+        Status    string `json:"status"`
+        IsRunning bool   `json:"is_running"`
+        User      string `json:"user,omitempty"`
+    }
+    
+    if err := json.Unmarshal(body, &healthResp); err == nil {
+        user := healthResp.User
+        
+        // Если user пустой, пытаемся извлечь из status
+        if user == "" && healthResp.Status != "" {
+            // Ищем текст между ( и )
+            start := strings.Index(healthResp.Status, "(")
+            end := strings.Index(healthResp.Status, ")")
+            if start != -1 && end != -1 && start < end {
+                user = healthResp.Status[start+1 : end]
+            }
+        }
+        
+        return healthResp.IsRunning, user, nil
+    }
+    
+    // Если не JSON - проверяем старую строку и извлекаем пользователя
+    // Пример: "🟢 IServer.exe запущен (REVDA\nb-a-sri-s)"
+    user := ""
+    start := strings.Index(bodyStr, "(")
+    end := strings.Index(bodyStr, ")")
+    if start != -1 && end != -1 && start < end {
+        user = bodyStr[start+1 : end]
+    }
+    
+    return strings.Contains(bodyStr, "🟢"), user, nil
 }
 
 // getPrivilegesForServer - получение информации о Web API
