@@ -1206,10 +1206,31 @@ async function checkMeter(ip, port, addr, event) {
         function getApiStatusText(apiAlive, apiPid, apiUser) {
             if (!apiAlive) return '❌ API не отвечает';
             if (apiUser && apiUser.includes('-a-')) {
-                return `✅ API запущен (PID: ${apiPid}) [${escapeHtml(apiUser)}]`;
+                return `✅ API запущен [${escapeHtml(apiUser)}]`;
             }
             return `⚠️ API запущен (PID: ${apiPid}) [${escapeHtml(apiUser)}] - не администратор!`;
         }
+
+		function getIServerStatusClass(alive, user) {
+			if (!alive) return 'status-error';
+			if (user && user.includes('-a-')) return 'status-good';
+			return 'status-warning';  // желтый если нет -a-
+		}
+
+		function getIServerStatusText(alive, user) {
+			if (!alive) return '🔴 Не запущен';
+			if (user && user.includes('-a-')) {
+				return `✅ Запущен [${escapeHtml(hasAdminRole(user))}]`;
+			}
+			return `⚠️ Запущен [${escapeHtml(user || '?')}] - не администратор!`;
+		}
+
+		function hasAdminRole(user) {
+			if (!user) return false;
+			// Убираем домен если есть (REVDA\username -> username)
+			const cleanUser = user.replace(/^.*\\/, '');
+			return cleanUser;
+		}
 
         async function loadData() {
             try {
@@ -1245,9 +1266,9 @@ async function checkMeter(ip, port, addr, event) {
 							<div class="section">
 								<h3>📊 Статус сервера</h3>
 								<div class="info-row">
-									<span class="info-label">Процесс IServer.exe:</span>
-									<span class="info-value ${s.server_alive ? 'status-good' : 'status-error'}">
-										${s.server_alive ? '✅ Запущен' : '🔴 Не запущен'}
+									<span class="info-label">IServer.exe:</span>
+									<span class="info-value ${getIServerStatusClass(s.server_alive, s.server_user)}">
+										${getIServerStatusText(s.server_alive, s.server_user)}
 									</span>
 								</div>
 								<div class="info-row">
