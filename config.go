@@ -15,6 +15,18 @@ type ServerConfig struct {
 	Port    int    `json:"port"`
 }
 
+type MQTTConfig struct {
+	Enabled   bool   `json:"enabled"`
+	Broker    string `json:"broker"`
+	Port      string `json:"port"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Topic     string `json:"topic"`
+	Interval  int    `json:"interval_minutes"`
+	StartHour int    `json:"start_hour"`
+	EndHour   int    `json:"end_hour"`
+}
+
 // ServersConfig - общая конфигурация
 type ServersConfig struct {
 	Servers              []ServerConfig `json:"servers"`
@@ -23,6 +35,7 @@ type ServersConfig struct {
 	TimeDiffThreshold    int            `json:"time_diff_threshold_seconds"`
 	SchedulerEnabled     bool           `json:"scheduler_enabled"`
 	RestartTimes         []string       `json:"restart_times"`
+	MQTT                 MQTTConfig     `json:"mqtt"`
 }
 
 var (
@@ -32,17 +45,16 @@ var (
 	shutdown      = make(chan bool, 1)
 )
 
-
 // MeterConfig - конфигурация прибора учета
 type MeterConfig struct {
-	ID              int    `json:"id"`
-	Name            string `json:"name"`
-	ModemLocation   string `json:"modem_location"`
-	ModemIP         string `json:"modem_ip"`
-	ConnectionPort  string `json:"connection_port"`
-	MeterType       string `json:"meter_type"`
-	MeterNumber     string `json:"meter_number"`
-	AccountingType  string `json:"accounting_type"`
+	ID             int    `json:"id"`
+	Name           string `json:"name"`
+	ModemLocation  string `json:"modem_location"`
+	ModemIP        string `json:"modem_ip"`
+	ConnectionPort string `json:"connection_port"`
+	MeterType      string `json:"meter_type"`
+	MeterNumber    string `json:"meter_number"`
+	AccountingType string `json:"accounting_type"`
 }
 
 // MetersConfig - конфигурация приборов учета
@@ -55,13 +67,11 @@ var (
 	metersPath   = "config/meters.json"
 )
 
-
-
 type ModemConfig struct {
-	IP      string `json:"ip"`
-	Port    int    `json:"port"`
-	Name    string `json:"name"`
-	Group   string `json:"group"` // группа (5155, 5143, 5167)
+	IP    string `json:"ip"`
+	Port  int    `json:"port"`
+	Name  string `json:"name"`
+	Group string `json:"group"` // группа (5155, 5143, 5167)
 }
 
 // ModemsConfig - конфигурация модемов
@@ -74,7 +84,6 @@ var (
 	modemsConfig ModemsConfig
 	modemsPath   = "config/modems.json"
 )
-
 
 // LoadMetersConfig загружает конфигурацию приборов учета
 func LoadMetersConfig() error {
@@ -108,7 +117,6 @@ func GetMetersConfig() MetersConfig {
 	return metersConfig
 }
 
-
 // LoadModemsConfig загружает конфигурацию модемов
 func LoadModemsConfig() error {
 	if err := os.MkdirAll("config", 0755); err != nil {
@@ -122,7 +130,6 @@ func LoadModemsConfig() error {
 			Modems: []ModemConfig{
 				{IP: "172.16.56.154", Port: 5155, Name: "Модем 1", Group: "5155"},
 				{IP: "172.16.56.153", Port: 5155, Name: "Модем 2", Group: "5155"},
-
 			},
 			Timeout: 3,
 		}
@@ -147,7 +154,6 @@ func GetModemsConfig() ModemsConfig {
 	return modemsConfig
 }
 
-
 // LoadServersConfig загружает конфигурацию серверов
 func LoadServersConfig() error {
 	// Создаем директорию если нет
@@ -167,7 +173,7 @@ func LoadServersConfig() error {
 			CheckIntervalSeconds: 30,
 			TimeDiffThreshold:    3,
 			SchedulerEnabled:     true,
-			RestartTimes:         []string{"02:50"},   //, "06:50" если несколько раз
+			RestartTimes:         []string{"02:50"}, //, "06:50" если несколько раз
 		}
 
 		fmt.Println("Создан файл конфигурации config/servers.json")

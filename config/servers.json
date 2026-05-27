@@ -15,5 +15,16 @@
   "check_interval_seconds": 30,
   "time_diff_threshold_seconds": 3,
   "scheduler_enabled": true,
-  "restart_times": ["12:44", "02:50"]
+  "restart_times": ["12:44", "02:50"],
+  "mqtt": {
+    "enabled": true,
+    "broker": "m5.wqtt.ru",
+    "port": "14407",
+    "username": "u_9S9DTC",
+    "password": "3IO3T6Y0",
+    "topic": "maxmsg",
+    "interval_minutes": 120,
+    "start_hour": 3,
+    "end_hour": 23
+  }
 }

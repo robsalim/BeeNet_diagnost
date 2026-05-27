@@ -7,11 +7,13 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"syscall"
-	"time"
 	"regexp"
 	"strconv"
 	"strings"
+	"syscall"
+	"time"
+
+	_ "github.com/eclipse/paho.mqtt.golang"
 )
 
 func main() {
@@ -30,13 +32,13 @@ func main() {
 	if err := LoadModemsConfig(); err != nil {
 		log.Printf("Предупреждение: не удалось загрузить modems.json: %v", err)
 	}
-	
+
 	if err := LoadMetersConfig(); err != nil {
 		log.Printf("Предупреждение: не удалось загрузить meters.json: %v", err)
 	}
-	
+
 	cfg := GetServersConfig()
-	
+
 	setupSignalHandler()
 
 	printConfigInfo(cfg)
@@ -73,14 +75,24 @@ func printConfigInfo(cfg ServersConfig) {
 func startComponents(cfg ServersConfig) {
 	// Запускаем мониторинг
 	go StartMonitoring()
-	
+
 	//Запуск планировщика
 	go StartScheduler()
-	
+
+	// Запускаем WQTT уведомления
+	if cfg.MQTT.Enabled {
+		fmt.Println("📡 MQTT Start")
+		go StartMQTTNotifier()
+		// Отправляем тестовое уведомление при старте (через 5 секунд)
+		go func() {
+			time.Sleep(5 * time.Second)
+			fmt.Println("📡 MQTT sendMessage")
+			sendMQTTMessage("Start")
+		}()
+	}
+
 	// Запускаем TCP серверы для всех портов из списка приборов
 	go startTCPServersFromMeters()
-
-
 
 	// Запускаем веб-сервер
 	go func() {
@@ -99,10 +111,9 @@ func startComponents(cfg ServersConfig) {
 		http.HandleFunc("/api/ping", handlePingAPI)
 		http.HandleFunc("/api/check-meter", handleCheckMeter)
 		http.HandleFunc("/api/check-local-port", handleCheckLocalPort)
-				
+
 		http.HandleFunc("/api/meters", handleMetersAPI)
 
-		
 		http.HandleFunc("/api/doc", func(w http.ResponseWriter, r *http.Request) {
 			http.ServeFile(w, r, "api.txt")
 		})
@@ -187,16 +198,16 @@ func getNetworkInfo(port string) {
 func startTCPServersFromMeters() {
 	meters := GetMetersConfig()
 	ports := make(map[int]bool)
-	
+
 	// Собираем уникальные порты из всех приборов (только где нет "сервер")
 	for _, meter := range meters.Meters {
 		connectionPort := meter.ConnectionPort
-		
+
 		// Пропускаем, если есть слово "сервер" (это удаленные модемы, не локальные)
 		if strings.Contains(strings.ToLower(connectionPort), "сервер") {
 			continue
 		}
-		
+
 		// Извлекаем порт (последние 4 цифры)
 		portMatch := regexp.MustCompile(`(\d{4})$`).FindStringSubmatch(connectionPort)
 		if len(portMatch) > 0 {
@@ -206,13 +217,13 @@ func startTCPServersFromMeters() {
 			}
 		}
 	}
-	
+
 	// Запускаем TCP серверы на каждом порту
 	for port := range ports {
 		go StartTCPServer(port)
 		time.Sleep(100 * time.Millisecond)
 	}
-	
+
 	if len(ports) > 0 {
 		fmt.Printf("🔌 Запущено TCP серверов на портах: %v\n", ports)
 	} else {
