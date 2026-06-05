@@ -79,16 +79,13 @@ func startComponents(cfg ServersConfig) {
 	//Запуск планировщика
 	go StartScheduler()
 
-	// Запускаем WQTT уведомления
-	if cfg.MQTT.Enabled {
-		fmt.Println("📡 MQTT Start")
-		go StartMQTTNotifier()
-		// Отправляем тестовое уведомление при старте (через 5 секунд)
-		go func() {
-			time.Sleep(5 * time.Second)
-			fmt.Println("📡 MQTT sendMessage")
-			sendMQTTMessage("Start")
-		}()
+	// Запускаем ntfy уведомления
+	go StartNtfyNotifier()
+
+	// Отправляем уведомление о старте
+	if cfg.Ntfy.Enabled {
+		SendNtfyNotification("🚀 Монитор запущен",
+			fmt.Sprintf("Монитор IServer запущен\nВремя: %s", time.Now().Format("2006-01-02 15:04:05")))
 	}
 
 	// Запускаем TCP серверы для всех портов из списка приборов

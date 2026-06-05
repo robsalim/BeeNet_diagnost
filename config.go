@@ -15,14 +15,12 @@ type ServerConfig struct {
 	Port    int    `json:"port"`
 }
 
-type MQTTConfig struct {
+// NtfyConfig - конфигурация ntfy уведомлений
+type NtfyConfig struct {
 	Enabled   bool   `json:"enabled"`
-	Broker    string `json:"broker"`
-	Port      string `json:"port"`
-	Username  string `json:"username"`
-	Password  string `json:"password"`
-	Topic     string `json:"topic"`
-	Interval  int    `json:"interval_minutes"`
+	Server    string `json:"server"`   // http://46.48.86.153:443
+	Topic     string `json:"topic"`    // ask
+	Priority  int    `json:"priority"` // 1=min, 2=low, 3=default, 4=high, 5=max
 	StartHour int    `json:"start_hour"`
 	EndHour   int    `json:"end_hour"`
 }
@@ -35,7 +33,8 @@ type ServersConfig struct {
 	TimeDiffThreshold    int            `json:"time_diff_threshold_seconds"`
 	SchedulerEnabled     bool           `json:"scheduler_enabled"`
 	RestartTimes         []string       `json:"restart_times"`
-	MQTT                 MQTTConfig     `json:"mqtt"`
+	//MQTT                 MQTTConfig     `json:"mqtt"`
+	Ntfy NtfyConfig `json:"ntfy"` // добавить
 }
 
 var (

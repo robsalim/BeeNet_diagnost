@@ -7,56 +7,67 @@ import (
 	"time"
 )
 
+// TCPClient - структура клиента
+type TCPClient struct {
+	Conn     net.Conn
+	Addr     string
+	Port     int
+	LastSeen time.Time
+	Mu       sync.Mutex
+}
+
 var (
-	tcpServers   = make(map[int]net.Listener)
-	tcpServersMu sync.RWMutex
+	tcpClients   = make(map[int]*TCPClient)
+	tcpClientsMu sync.RWMutex
 )
 
 // StartTCPServer запускает TCP сервер на указанном порту
 func StartTCPServer(port int) {
-	addr := fmt.Sprintf(":%d", port)
-	listener, err := net.Listen("tcp", addr)
-	if err != nil {
-		fmt.Printf("❌ Не удалось запустить сервер на порту %d: %v\n", port, err)
-		return
-	}
-	
-	tcpServersMu.Lock()
-	tcpServers[port] = listener
-	tcpServersMu.Unlock()
-	
-	fmt.Printf("🔌 TCP сервер запущен на порту %d (ожидание подключения счетчиков)\n", port)
-	
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			return
-		}
-		go handleTCPConnection(conn, port)
-	}
+    addr := fmt.Sprintf(":%d", port)
+    listener, err := net.Listen("tcp", addr)
+    if err != nil {
+        fmt.Printf("❌ Не удалось запустить сервер на порту %d: %v\n", port, err)
+        return
+    }
+    
+    fmt.Printf("🔌 TCP сервер запущен на порту %d\n", port)
+    
+    for {
+        conn, err := listener.Accept()
+        if err != nil {
+            return
+        }
+        
+        addr := conn.RemoteAddr().String()
+        fmt.Printf("📡 MOXA подключилась к порту %d: %s\n", port, addr)
+        
+        client := &TCPClient{
+            Conn:     conn,
+            Addr:     addr,
+            Port:     port,
+            LastSeen: time.Now(),
+        }
+        
+        tcpClientsMu.Lock()
+        tcpClients[port] = client  // просто сохраняем, не закрывая старое
+        tcpClientsMu.Unlock()
+    }
 }
 
-// handleTCPConnection обрабатывает подключение счетчика
-func handleTCPConnection(conn net.Conn, port int) {
-	defer conn.Close()
-	
-	addr := conn.RemoteAddr().String()
-	fmt.Printf("📡 Счетчик подключился к порту %d: %s\n", port, addr)
-	
-	// Читаем запрос
-	buf := make([]byte, 100)
-    // Устанавливаем таймаут 8 минут (480 секунд) больше чем на моксе
-	conn.SetReadDeadline(time.Now().Add(8 * time.Minute))
-	n, err := conn.Read(buf)
-	if err != nil {
-		fmt.Printf("❌ Ошибка чтения на порту %d: %v\n", port, err)
-		return
+// GetTCPClientByPort возвращает активного клиента по порту
+func GetTCPClientByPort(port int) *TCPClient {
+	tcpClientsMu.RLock()
+	defer tcpClientsMu.RUnlock()
+	return tcpClients[port]
+}
+
+// RemoveTCPClient удаляет клиента
+func RemoveTCPClient(port int) {
+	tcpClientsMu.Lock()
+	defer tcpClientsMu.Unlock()
+	if client, exists := tcpClients[port]; exists {
+		client.Conn.Close()
+		delete(tcpClients, port)
+		fmt.Printf("❌ MOXA на порту %d отключена\n", port)
 	}
-	
-	request := buf[:n]
-	fmt.Printf("📥 Получен запрос на порту %d: % X\n", port, request)
-	
-	// Отправляем ответ эхом
-	conn.Write(request)
-	fmt.Printf("📤 Отправлен ответ на порту %d: % X\n", port, request)
 }

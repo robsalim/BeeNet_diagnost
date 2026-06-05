@@ -455,92 +455,107 @@ func handleCheckMeter(w http.ResponseWriter, r *http.Request) {
 
 // handleCheckLocalPort - проверка, есть ли подключенный счетчик на порту
 func handleCheckLocalPort(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Только POST метод", http.StatusMethodNotAllowed)
-		return
-	}
+    if r.Method != "POST" {
+        http.Error(w, "Только POST метод", http.StatusMethodNotAllowed)
+        return
+    }
 
-	var req struct {
-		Port int    `json:"port"`
-		Addr int    `json:"addr"`
-	}
-	
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"success": false,
-			"message": "Ошибка разбора JSON",
-		})
-		return
-	}
+    var req struct {
+        Port int `json:"port"`
+        Addr int `json:"addr"`
+    }
+    
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "success": false,
+            "message": "Ошибка разбора JSON",
+        })
+        return
+    }
 
-	// Проверяем, запущен ли сервер на этом порту
-	tcpServersMu.RLock()
-	_, serverExists := tcpServers[req.Port]
-	tcpServersMu.RUnlock()
+    // Получаем активное подключение от MOXA по этому порту
+    client := GetTCPClientByPort(req.Port)
+    if client == nil {
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "success": false,
+            "message": fmt.Sprintf("❌ Нет активного подключения MOXA на порту %d", req.Port),
+        })
+        return
+    }
+
+    client.Mu.Lock()
+    defer client.Mu.Unlock()
+
+    // Проверяем живо ли соединение
+    client.Conn.SetWriteDeadline(time.Now().Add(1 * time.Second))
+    if _, err := client.Conn.Write([]byte{}); err != nil {
+        RemoveTCPClient(req.Port)
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "success": false,
+            "message": fmt.Sprintf("❌ Соединение с MOXA на порту %d разорвано", req.Port),
+        })
+        return
+    }
+
+    // Очищаем буфер соединения от старых данных
+    client.Conn.SetReadDeadline(time.Now().Add(1 * time.Millisecond))
+    junk := make([]byte, 1024)
+    for {
+        _, err := client.Conn.Read(junk)
+        if err != nil {
+            break
+        }
+    }
 	
-	if !serverExists {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"success": false,
-			"message": fmt.Sprintf("❌ Сервер на порту %d не запущен", req.Port),
-		})
-		return
-	}
-	
-	// Подключаемся к локальному серверу (сами к себе)
-	conn, err := net.DialTimeout("tcp", fmt.Sprintf("127.0.0.1:%d", req.Port), 3*time.Second)
-	if err != nil {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"success": false,
-			"message": fmt.Sprintf("❌ Нет подключения на порту %d", req.Port),
-		})
-		return
-	}
-	defer conn.Close()
-	
-	// Отправляем запрос счетчику
-	request := []byte{byte(req.Addr), 0x00}
-	crc := calculateCRC(request)
-	request = append(request, byte(crc&0xFF), byte(crc>>8))
-	
-	conn.SetWriteDeadline(time.Now().Add(3 * time.Second))
-	_, err = conn.Write(request)
-	if err != nil {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"success": false,
-			"message": fmt.Sprintf("❌ Ошибка отправки: %v", err),
-		})
-		return
-	}
-	
-	// Читаем ответ
-	buf := make([]byte, 100)
-	conn.SetReadDeadline(time.Now().Add(3 * time.Second))
-	n, err := conn.Read(buf)
-	
-	if err != nil {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"success": false,
-			"message": "❌ Счетчик НЕ ОТВЕЧАЕТ",
-		})
-		return
-	}
-	
-	response := buf[:n]
-	
-	// Проверяем ответ
-	if n >= 4 && response[0] == byte(req.Addr) && response[1] == 0x00 {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"success":  true,
-			"message":  fmt.Sprintf("✅ Счетчик В СЕТИ! (ответ: %d байт)", n),
-			"raw_data": fmt.Sprintf("% X", response),
-		})
-	} else {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"success":  false,
-			"message":  "❌ Неверный ответ от счетчика",
-			"raw_data": fmt.Sprintf("% X", response),
-		})
-	}
+    // Сбрасываем дедлайн
+    client.Conn.SetReadDeadline(time.Time{})
+
+    // Отправляем запрос через соединение MOXA
+    request := []byte{byte(req.Addr), 0x00}
+    crc := calculateCRC(request)
+    request = append(request, byte(crc&0xFF), byte(crc>>8))
+    
+    client.Conn.SetWriteDeadline(time.Now().Add(3 * time.Second))
+    _, err := client.Conn.Write(request)
+    if err != nil {
+        RemoveTCPClient(req.Port)
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "success": false,
+            "message": fmt.Sprintf("❌ Ошибка отправки: %v", err),
+        })
+        return
+    }
+    
+    // Читаем ответ
+    buf := make([]byte, 100)
+    client.Conn.SetReadDeadline(time.Now().Add(3 * time.Second))
+    n, err := client.Conn.Read(buf)
+    
+    if err != nil {
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "success": false,
+            "message": fmt.Sprintf("❌ Счетчик НЕ ОТВЕЧАЕТ: %v", err),
+        })
+        return
+    }
+    
+    client.LastSeen = time.Now()
+    response := buf[:n]
+    
+    // Проверяем ответ
+    if n >= 4 && response[0] == byte(req.Addr) && response[1] == 0x00 {
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "success":  true,
+            "message":  fmt.Sprintf("✅ Счетчик В СЕТИ! (ответ: %d байт)", n),
+            "raw_data": fmt.Sprintf("% X", response),
+        })
+    } else {
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "success":  false,
+            "message":  "❌ Неверный ответ от счетчика",
+            "raw_data": fmt.Sprintf("% X", response),
+        })
+    }
 }
 
 // calculateCRC - расчет CRC16
