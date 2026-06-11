@@ -9,6 +9,11 @@
       "name": "Сервер `Малые точки` (10.98.30.36)",
       "address": "http://10.98.30.36:9200",
       "port": 9200
+    },
+    {
+      "name": "Сервер `Техучет`",
+      "address": "http://10.96.30.61:9200",
+      "port": 9200
     }
   ],
   "web_port": ":8090",
@@ -16,15 +21,12 @@
   "time_diff_threshold_seconds": 3,
   "scheduler_enabled": true,
   "restart_times": ["12:44", "02:50"],
-  "mqtt": {
+  "ntfy": {
     "enabled": true,
-    "broker": "***",
-    "port": "***",
-    "username": "***",
-    "password": "***",
-    "topic": "maxmsg",
-    "interval_minutes": 120,
-    "start_hour": 3,
+    "server": "http://46.48.86.153:443",
+    "topic": "ask",
+    "priority": 3,
+    "start_hour": 8,
     "end_hour": 23
   }
 }
